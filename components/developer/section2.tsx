@@ -22,7 +22,7 @@ interface TimelineData {
   current?: boolean;
 }
 
-// --- Unified Data (Chronological Order: Education First -> Current Job Last) ---
+// --- Unified Data ---
 const timelineData: TimelineData[] = [
   {
     id: 'education',
@@ -111,12 +111,12 @@ const Section2 = () => {
   });
 
   return (
-    <section className="relative w-full min-h-screen bg-neutral-950 text-neutral-200 py-32 px-4 sm:px-8 overflow-hidden font-sans">
+    <section className="relative w-full min-h-screen bg-neutral-950 text-neutral-200 py-20 md:py-32 px-4 sm:px-8 overflow-hidden font-sans">
       
       {/* Background Ambience */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-purple-900/10 rounded-full blur-[100px]" />
+          <div className="absolute top-[10%] left-[20%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-blue-900/10 rounded-full blur-[80px] md:blur-[120px]" />
+          <div className="absolute bottom-[10%] right-[10%] w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-purple-900/10 rounded-full blur-[60px] md:blur-[100px]" />
       </div>
 
       <div className="max-w-5xl mx-auto relative z-10">
@@ -126,18 +126,18 @@ const Section2 = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-24 text-center md:text-left md:pl-8"
+          className="mb-16 md:mb-24 text-center md:text-left md:pl-8"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tighter mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tighter mb-4">
             Professional <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Journey</span>
           </h2>
-          <p className="text-neutral-400 text-lg max-w-2xl leading-relaxed">
+          <p className="text-neutral-400 text-base md:text-lg max-w-2xl mx-auto md:mx-0 leading-relaxed px-2">
             From academic foundations to engineering scalable systems for industry leaders.
           </p>
         </motion.div>
 
         {/* Timeline Container */}
-        <div ref={containerRef} className="relative space-y-16 md:space-y-24">
+        <div ref={containerRef} className="relative space-y-12 md:space-y-24">
           
           {/* Vertical Lines */}
           <div className="absolute left-4 md:left-8 top-0 bottom-0 w-[2px] bg-neutral-800" />
@@ -161,11 +161,12 @@ const TimelineItem = ({ data, index }: { data: TimelineData, index: number }) =>
 
   return (
     <motion.div 
-      initial={{ opacity: 0, x: -20 }}
+      initial={{ opacity: 0, x: -10 }}
       whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="relative pl-12 md:pl-24 group"
+      // Responsive padding: pl-10 for mobile (enough for the line), pl-24 for desktop
+      className="relative pl-10 md:pl-24 group"
     >
       {/* Timeline Node */}
       <div className="absolute left-4 md:left-8 -translate-x-1/2 top-0 flex items-center justify-center">
@@ -182,7 +183,7 @@ const TimelineItem = ({ data, index }: { data: TimelineData, index: number }) =>
         )}
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-10">
         
         {/* Date & Metadata Column (Desktop) */}
         <div className="hidden md:block w-40 text-right pt-1">
@@ -196,12 +197,12 @@ const TimelineItem = ({ data, index }: { data: TimelineData, index: number }) =>
           {/* Card Hover Gradient Background */}
           <div className={`absolute -inset-0.5 bg-gradient-to-r ${data.color} rounded-2xl opacity-0 group-hover:opacity-20 transition duration-500 blur-lg`} />
           
-          <div className="relative bg-neutral-900/50 backdrop-blur-md border border-white/10 p-6 md:p-8 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-300">
+          <div className="relative bg-neutral-900/50 backdrop-blur-md border border-white/10 p-5 md:p-8 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-300">
             
             {/* Header */}
-            <div className="flex justify-between items-start gap-4 mb-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 md:w-14 md:h-14 relative bg-white rounded-xl flex items-center justify-center p-1 shadow-lg">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4 mb-5 md:mb-6">
+              <div className="flex items-start sm:items-center gap-3 md:gap-4 w-full sm:w-auto">
+                <div className="w-10 h-10 md:w-14 md:h-14 flex-shrink-0 relative bg-white rounded-xl flex items-center justify-center p-1 shadow-lg">
                   <Image 
                     src={data.logo} 
                     alt={data.company} 
@@ -210,12 +211,12 @@ const TimelineItem = ({ data, index }: { data: TimelineData, index: number }) =>
                     className="object-contain w-full h-full"
                   />
                 </div>
-                <div>
-                  <h3 className="text-xl md:text-2xl font-bold text-white">{data.role}</h3>
-                  <div className="flex items-center gap-2 text-neutral-300 font-medium">
-                    {data.company}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg md:text-2xl font-bold text-white leading-tight break-words">{data.role}</h3>
+                  <div className="flex flex-wrap items-center gap-2 text-neutral-300 font-medium mt-1">
+                    <span className="text-sm md:text-base truncate max-w-[200px] sm:max-w-none">{data.company}</span>
                     {data.current && (
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold tracking-wider border border-emerald-500/20">
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold tracking-wider border border-emerald-500/20 whitespace-nowrap">
                             Current
                         </span>
                     )}
@@ -224,30 +225,30 @@ const TimelineItem = ({ data, index }: { data: TimelineData, index: number }) =>
               </div>
               
               {/* Mobile Date (Visible only on small screens) */}
-              <div className="md:hidden text-right">
-                <div className="text-sm font-bold text-neutral-300">{data.period.split(' - ')[0]}</div>
-                <div className="text-xs text-neutral-500">{data.period.split(' - ')[1]}</div>
+              <div className="flex flex-row sm:flex-col justify-between w-full sm:w-auto items-end sm:text-right border-t border-white/5 sm:border-0 pt-3 sm:pt-0 mt-1 sm:mt-0">
+                <div className="text-sm font-bold text-neutral-300 whitespace-nowrap">{data.period.split(' - ')[0]}</div>
+                <div className="text-xs text-neutral-500 whitespace-nowrap">{data.period.split(' - ')[1]}</div>
               </div>
             </div>
 
             {/* Location & Type */}
-            <div className="flex flex-wrap gap-4 text-xs font-medium text-neutral-500 uppercase tracking-wider mb-6">
+            <div className="flex flex-wrap gap-3 md:gap-4 text-xs font-medium text-neutral-500 uppercase tracking-wider mb-5 md:mb-6">
               <div className="flex items-center gap-1.5">
-                <MapPin size={14} /> {data.location}
+                <MapPin size={12} className="md:w-[14px] md:h-[14px]" /> {data.location}
               </div>
               {isEducation && (
                   <div className="flex items-center gap-1.5 text-purple-400/80">
-                    <Building2 size={14} /> Education
+                    <Building2 size={12} className="md:w-[14px] md:h-[14px]" /> Education
                   </div>
               )}
             </div>
 
             {/* Description Points */}
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-2 md:space-y-3 mb-6 md:mb-8">
               {data.points.map((point: string, i: number) => (
                 <li key={i} className="flex items-start gap-3 text-sm md:text-base text-neutral-400 leading-relaxed">
-                  <span className={`mt-2 w-1.5 h-1.5 rounded-full bg-gradient-to-r ${data.color} flex-shrink-0`} />
-                  {point}
+                  <span className={`mt-1.5 md:mt-2 w-1.5 h-1.5 rounded-full bg-gradient-to-r ${data.color} flex-shrink-0`} />
+                  <span>{point}</span>
                 </li>
               ))}
             </ul>
@@ -257,7 +258,7 @@ const TimelineItem = ({ data, index }: { data: TimelineData, index: number }) =>
               {data.tech.map((tech: string, i: number) => (
                 <span 
                   key={i} 
-                  className="px-3 py-1.5 text-xs font-medium text-neutral-300 bg-white/5 border border-white/5 rounded-full hover:bg-white/10 hover:text-white transition-colors cursor-default"
+                  className="px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-medium text-neutral-300 bg-white/5 border border-white/5 rounded-full hover:bg-white/10 hover:text-white transition-colors cursor-default"
                 >
                   {tech}
                 </span>
