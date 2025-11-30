@@ -66,7 +66,7 @@ const timelineData: TimelineData[] = [
     period: "Oct 2023 - Mar 2024",
     duration: "6 mos",
     location: "Bengaluru · Remote",
-    logo: "/logos/disney.jpeg",
+    logo: "/logos/disney.webp",
     description: "Contributed to backend scalability and API development for high-traffic services.",
     points: [
       "Supported backend API development for the Messenger Service.",
