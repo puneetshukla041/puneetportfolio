@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Volume2, VolumeX, Clapperboard, Award, Sparkles, Sunset } from 'lucide-react';
+import { Volume2, VolumeX, Clapperboard, Sparkles, Film } from 'lucide-react';
 
-const SectionVrindavan = () => {
+const Section3 = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [showIntro, setShowIntro] = useState(false);
@@ -12,9 +12,6 @@ const SectionVrindavan = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
-  // ---------------------------------------------------------------------------
-  // 1. LOADING ALGORITHM
-  // ---------------------------------------------------------------------------
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -28,9 +25,6 @@ const SectionVrindavan = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // ---------------------------------------------------------------------------
-  // 2. INTRO SEQUENCE LOGIC
-  // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!isLoading) {
       const startTimer = setTimeout(() => {
@@ -58,9 +52,6 @@ const SectionVrindavan = () => {
     }, 800);
   };
 
-  // ---------------------------------------------------------------------------
-  // 3. SOUND LOGIC
-  // ---------------------------------------------------------------------------
   const attemptPlay = useCallback(async () => {
     if (videoRef.current) {
       try {
@@ -84,9 +75,6 @@ const SectionVrindavan = () => {
     }
   }, []);
 
-  // ---------------------------------------------------------------------------
-  // 4. INTERSECTION OBSERVER
-  // ---------------------------------------------------------------------------
   useEffect(() => {
     if (isLoading) return;
     const currentSectionRef = sectionRef.current;
@@ -116,16 +104,10 @@ const SectionVrindavan = () => {
 
   return (
     <section
-      id="section-vrindavan"
+      id="section-3"
       ref={sectionRef}
-      // LAYOUT: 
-      // Mobile: Flex Column (Video Top, Text Bottom)
-      // Desktop: Flex Row (Video Left, Text Right)
       className="relative w-full min-h-screen bg-black overflow-hidden flex flex-col md:flex-row"
     >
-      {/* ---------------------------------------------------------------------------
-          LOADER OVERLAY
-          --------------------------------------------------------------------------- */}
       <div
         className={`
           absolute inset-0 z-50 flex flex-col items-center justify-center bg-black
@@ -135,8 +117,8 @@ const SectionVrindavan = () => {
       >
         <div className="flex flex-col items-center gap-6">
           <div className="relative">
-            <Sparkles className="w-10 h-10 text-neutral-600 animate-pulse" />
-            <div className="absolute -top-1 -right-1 w-2 h-2 bg-teal-500 rounded-full animate-ping" />
+            <Clapperboard className="w-10 h-10 text-neutral-600 animate-pulse" />
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping" />
           </div>
           <div className="h-[2px] w-48 bg-neutral-900 rounded-full overflow-hidden">
             <div
@@ -145,19 +127,13 @@ const SectionVrindavan = () => {
             />
           </div>
           <span className="text-[10px] font-mono tracking-[0.3em] text-neutral-500 uppercase">
-            Awakening Spirit {progress}%
+            Loading 16mm Reel {progress}%
           </span>
         </div>
       </div>
 
-      {/* ---------------------------------------------------------------------------
-          VIDEO PANEL (LEFT SIDE ON DESKTOP)
-          --------------------------------------------------------------------------- */}
       <div className="w-full md:flex-1 bg-black flex items-center justify-center relative border-b md:border-b-0 md:border-r border-white/10">
-        
-        {/* THE 16:9 CONTAINER */}
         <div className="relative w-full aspect-video group bg-neutral-900 overflow-hidden shadow-2xl">
-            
             <video
               ref={videoRef}
               className="w-full h-full object-cover transform-gpu"
@@ -166,13 +142,9 @@ const SectionVrindavan = () => {
               preload="auto"
               onCanPlayThrough={handleVideoLoad}
             >
-              <source src="/videos/herothree.mp4" type="video/mp4" />
+              <source src="/videos/heroone.mp4" type="video/mp4" />
             </video>
-
-            {/* Cinematic Overlay (Peaceful Blue/Teal tint) */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-teal-900/10 to-black/30 pointer-events-none" />
-
-            {/* DIRECTOR INTRO */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
             <div
               className={`
                 absolute inset-0 z-30 flex flex-col items-center justify-center text-center pointer-events-none
@@ -190,12 +162,11 @@ const SectionVrindavan = () => {
               </div>
             </div>
 
-            {/* CONTROLS */}
             {!isLoading && (
               <div className="absolute bottom-4 right-4 z-40 flex items-center gap-3 animate-fade-in">
                 <div className="text-right hidden sm:block">
-                    <p className="text-[8px] font-bold tracking-widest text-white/90 uppercase">Atmosphere</p>
-                    <p className="text-[8px] text-white/60 font-mono">BINAURAL AUDIO</p>
+                    <p className="text-[8px] font-bold tracking-widest text-white/90 uppercase">Audio</p>
+                    <p className="text-[8px] text-white/60 font-mono">STEREO</p>
                 </div>
                 <button
                   onClick={toggleSound}
@@ -204,7 +175,7 @@ const SectionVrindavan = () => {
                   {isMuted ? (
                     <VolumeX className="w-4 h-4 text-white/70" />
                   ) : (
-                    <Volume2 className="w-4 h-4 text-white hover:text-teal-400" />
+                    <Volume2 className="w-4 h-4 text-white hover:text-yellow-400" />
                   )}
                 </button>
               </div>
@@ -212,57 +183,38 @@ const SectionVrindavan = () => {
         </div>
       </div>
 
-      {/* ---------------------------------------------------------------------------
-          TEXT PANEL (RIGHT SIDE ON DESKTOP)
-          --------------------------------------------------------------------------- */}
       <div className="w-full md:w-[40%] lg:w-[35%] bg-black flex flex-col items-center justify-center p-8 md:p-12 z-20 relative overflow-hidden">
-        
-        {/* Background Atmosphere (Teal/Cyan for River/Peace) */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-teal-800/10 blur-[90px] rounded-full pointer-events-none" />
-        
-        {/* Content */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-yellow-600/5 blur-[90px] rounded-full pointer-events-none" />
         <div className="relative max-w-sm text-center md:text-left space-y-8 md:space-y-12">
-          
-          {/* Tagline */}
           <div className="flex flex-col items-center md:items-start gap-3 opacity-0 animate-cinematic-fade" style={{ animationDelay: '0.2s' }}>
-             <div className="flex items-center gap-2 text-teal-500/80">
+             <div className="flex items-center gap-2 text-yellow-600/70">
                 <Sparkles className="w-3 h-3" />
-                <span className="text-[9px] font-mono tracking-[0.3em] uppercase">Yamuna Ghats</span>
+                <span className="text-[9px] font-mono tracking-[0.3em] uppercase">The Divine Play</span>
              </div>
              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white tracking-tight leading-[0.9]">
-               Vrindavan <br/>
-               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-200 via-teal-400 to-emerald-500">
-                 Peace
-               </span>
+               Braj Ki <br/>
+               <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-700">Holi</span>
              </h2>
           </div>
-
-          {/* Divider */}
           <div className="w-[1px] h-16 bg-gradient-to-b from-transparent via-neutral-700 to-transparent mx-auto md:mx-0 opacity-0 animate-cinematic-grow" style={{ animationDelay: '0.5s' }} />
-
-          {/* Body */}
+          
           <p className="text-sm md:text-base font-light leading-relaxed text-neutral-400 opacity-0 animate-cinematic-up font-serif italic" style={{ animationDelay: '0.8s' }}>
-            "Away from the chaos, time stands still on the banks of the sacred river. 
-            The gentle rustle of trees and the distant chants create a sanctuary 
-            where the heart finds its eternal rhythm."
+            &quot;In the sacred lanes of Vrindavan, colors aren&apos;t just thrown—they are lived. 
+            Witness the eternal dance where the divine love of Radha and Krishna 
+            dissolves the boundaries between the human and the celestial.&quot;
           </p>
 
-          {/* Tech Specs */}
           <div className="flex items-center justify-center md:justify-start gap-4 opacity-0 animate-cinematic-fade" style={{ animationDelay: '1.2s' }}>
             <div className="flex items-center gap-2 text-neutral-700">
-                <Sunset className="w-3 h-3" />
-                <span className="text-[9px] tracking-widest uppercase font-bold">Golden Hour</span>
+                <Film className="w-3 h-3" />
+                <span className="text-[9px] tracking-widest uppercase font-bold">CinemaScope</span>
             </div>
              <div className="w-1 h-1 bg-neutral-800 rounded-full" />
-             <span className="text-[9px] text-neutral-700 tracking-widest uppercase font-bold">50mm Prime</span>
+             <span className="text-[9px] text-neutral-700 tracking-widest uppercase font-bold">Remastered</span>
           </div>
-          
         </div>
       </div>
 
-      {/* ---------------------------------------------------------------------------
-          ANIMATIONS
-          --------------------------------------------------------------------------- */}
       <style>{`
         @keyframes fade-in-slow {
           0% { opacity: 0; transform: translateY(10px); }
@@ -289,4 +241,4 @@ const SectionVrindavan = () => {
   );
 };
 
-export default SectionVrindavan;
+export default Section3;

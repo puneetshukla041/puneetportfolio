@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Volume2, VolumeX, Clapperboard, Award, Sunrise, Wind } from 'lucide-react';
+import { Volume2, VolumeX, Sunrise, Wind } from 'lucide-react';
 
 const SectionBombay = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -242,9 +242,9 @@ const SectionBombay = () => {
 
           {/* Body */}
           <p className="text-sm md:text-base font-light leading-relaxed text-neutral-400 opacity-0 animate-cinematic-up font-serif italic" style={{ animationDelay: '0.8s' }}>
-            "The sea breeze carries the stories of a million dreams. As the first light 
-            hits the Queen's Necklace, the city shakes off its slumber, ready to 
-            conquer another day in the city that never sleeps."
+            &quot;The sea breeze carries the stories of a million dreams. As the first light 
+            hits the Queen&apos;s Necklace, the city shakes off its slumber, ready to 
+            conquer another day in the city that never sleeps.&quot;
           </p>
 
           {/* Tech Specs */}

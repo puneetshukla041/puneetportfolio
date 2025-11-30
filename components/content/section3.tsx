@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Volume2, VolumeX, Clapperboard, Award, Sparkles, Film } from 'lucide-react';
+import { Volume2, VolumeX, Clapperboard, Sparkles, Film } from 'lucide-react';
 
 const Section3 = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -242,9 +242,9 @@ const Section3 = () => {
 
           {/* Body */}
           <p className="text-sm md:text-base font-light leading-relaxed text-neutral-400 opacity-0 animate-cinematic-up font-serif italic" style={{ animationDelay: '0.8s' }}>
-            "In the sacred lanes of Vrindavan, colors aren't just thrown—they are lived. 
+            &quot;In the sacred lanes of Vrindavan, colors aren&apos;t just thrown—they are lived. 
             Witness the eternal dance where the divine love of Radha and Krishna 
-            dissolves the boundaries between the human and the celestial."
+            dissolves the boundaries between the human and the celestial.&quot;
           </p>
 
           {/* Tech Specs */}

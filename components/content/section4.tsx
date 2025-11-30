@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Volume2, VolumeX, Clapperboard, Award, MapPin, Camera } from 'lucide-react';
+import { Volume2, VolumeX, MapPin, Camera } from 'lucide-react';
 
 const Section4 = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -242,9 +242,9 @@ const Section4 = () => {
 
           {/* Body */}
           <p className="text-sm md:text-base font-light leading-relaxed text-neutral-400 opacity-0 animate-cinematic-up font-serif italic" style={{ animationDelay: '0.8s' }}>
-            "Before the city wakes, the streets erupt in a chaotic symphony of fragrance and color. 
+            &quot;Before the city wakes, the streets erupt in a chaotic symphony of fragrance and color. 
             Marigolds, roses, and jasmine flood the alleyways, painting the dawn 
-            with the vibrant soul of the capital."
+            with the vibrant soul of the capital.&quot;
           </p>
 
           {/* Tech Specs */}
