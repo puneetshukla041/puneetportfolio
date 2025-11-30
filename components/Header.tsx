@@ -4,14 +4,15 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, AnimatePresence, SVGMotionProps } from 'framer-motion';
-import { Instagram, Linkedin, Github, ChevronRight, Code2, Palette } from 'lucide-react';
+import { motion, AnimatePresence, SVGMotionProps, Variants } from 'framer-motion';
+import { Instagram, Linkedin, Github, ChevronRight, Code2, Palette, Menu, X } from 'lucide-react';
 
 interface MenuItem {
   title: string;
   href: string;
 }
 
+// Custom Hamburger Icon Component for smooth SVG animation
 const Path = (props: SVGMotionProps<SVGPathElement>) => (
   <motion.path
     fill="transparent"
@@ -26,34 +27,37 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Determine current mode purely for Navigation Logic and Text Labels
+  // Mode Detection
   const isDeveloperMode = pathname?.includes('/developer');
 
   // UI States
   const [sticky, setSticky] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('Home');
+  const [isSwitching, setIsSwitching] = useState(false);
 
-  const lastScrollY = useRef(0);
-
-  // Toggle Handler: Simply pushes the opposite route
+  // Toggle Logic with Animation Delay
   const handleToggle = () => {
-    if (isDeveloperMode) {
-      router.push('/content');
-    } else {
-      router.push('/developer');
-    }
+    if (isSwitching) return;
+    setIsSwitching(true);
+
+    setTimeout(() => {
+      if (isDeveloperMode) {
+        router.push('/content');
+      } else {
+        router.push('/developer');
+      }
+      setTimeout(() => setIsSwitching(false), 500); 
+    }, 400); 
   };
 
-  // ScrollSpy Logic (Only for /content page)
+  // ScrollSpy Logic
   useEffect(() => {
     if (isDeveloperMode) return;
-
     const sections = [
       { id: 'section-1', name: 'Home' },
       { id: 'section-2', name: 'Gallery' },
       { id: 'section-3', name: 'Films' },
-      { id: 'section-4', name: 'Films' },
       { id: 'section-5', name: 'Contact Us' }
     ];
 
@@ -71,18 +75,15 @@ const Header = () => {
         }
       }
     };
-
     window.addEventListener('scroll', handleScrollSpy);
-    handleScrollSpy();
     return () => window.removeEventListener('scroll', handleScrollSpy);
   }, [pathname, isDeveloperMode]);
 
-  // Navigation Handler
+  // Smooth Scroll Handler
   const handleLinkClick = (e: React.MouseEvent, item: MenuItem) => {
     if (item.href.startsWith('#')) {
       e.preventDefault();
-      const elementId = item.href.substring(1);
-      const element = document.getElementById(elementId);
+      const element = document.getElementById(item.href.substring(1));
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
         setActiveSection(item.title);
@@ -91,25 +92,16 @@ const Header = () => {
     setMobileMenuOpen(false);
   };
 
-  // Sticky Header Logic
+  // Sticky Header Effect
   useEffect(() => {
-    let ticking = false;
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-          setSticky(currentScrollY > 20);
-          lastScrollY.current = currentScrollY;
-          ticking = false;
-        });
-        ticking = true;
-      }
+      setSticky(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Menu Configuration
+  // Menu Data
   const developerMenuItems: MenuItem[] = [
     { title: 'Home', href: '/' },
     { title: 'Gallery', href: '/gallery' },
@@ -117,56 +109,60 @@ const Header = () => {
     { title: 'About', href: '/about' },
     { title: 'Contact', href: '/contact' },
   ];
-
   const contentMenuItems: MenuItem[] = [
     { title: 'Home', href: '#section-1' },
     { title: 'Gallery', href: '#section-2' },
     { title: 'Films', href: '#section-3' }, 
     { title: 'Contact Us', href: '#section-5' },
   ];
-
   const currentMenuItems = !isDeveloperMode ? contentMenuItems : developerMenuItems;
 
   const isItemActive = (item: MenuItem) => {
-    if (!isDeveloperMode) {
-      return activeSection === item.title;
-    }
-    return pathname === item.href;
+    return !isDeveloperMode ? activeSection === item.title : pathname === item.href;
+  };
+
+  // --- Animation Variants ---
+  const mobileMenuVariants: Variants = {
+    closed: { opacity: 0, height: 0, transition: { staggerChildren: 0.05, staggerDirection: -1 } },
+    open: { opacity: 1, height: '100vh', transition: { staggerChildren: 0.07, delayChildren: 0.2 } }
+  };
+
+  const mobileItemVariants: Variants = {
+    closed: { x: -20, opacity: 0 },
+    open: { x: 0, opacity: 1 }
   };
 
   return (
     <>
       {/* --- DESKTOP HEADER --- */}
       <motion.header
-        initial={{ y: 0 }}
-        animate={{
-          y: 0,
-          backgroundColor: sticky ? 'rgba(0, 0, 0, 0.6)' : 'transparent',
-          backdropFilter: sticky ? 'blur(12px)' : 'none',
-          borderBottom: sticky ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(255, 255, 255, 0)',
-        }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
-        className="hidden md:block fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300"
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        className={`hidden md:block fixed top-0 left-0 right-0 z-50 w-full transition-all duration-500 ease-in-out border-b ${
+          sticky 
+            ? 'bg-black/60 backdrop-blur-xl border-white/10 shadow-lg shadow-black/20' 
+            : 'bg-transparent border-transparent'
+        }`}
       >
-        <div className="max-w-7xl mx-auto px-6 h-[70px] flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-8 h-[80px] flex items-center justify-between">
           
-          <div className="flex-shrink-0 z-50 cursor-pointer">
-            <Link href="/" className="block relative group">
-              <div className="relative flex items-center">
-                    <Image 
-                      src="/images/logo.png" 
-                      alt="Logo" 
-                      width={150}
-                      height={40}
-                      className="h-10 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80" 
-                      priority
-                    />
-              </div>
-            </Link>
-          </div>
+          {/* Logo */}
+          <Link href="/" className="flex-shrink-0 cursor-pointer group">
+            <div className="relative">
+              <Image 
+                src="/images/logo.png" 
+                alt="Logo" 
+                width={140}
+                height={40}
+                className="h-10 w-auto object-contain transition-all duration-300 group-hover:brightness-125" 
+                priority
+              />
+            </div>
+          </Link>
 
+          {/* Centered Navigation Pills */}
           <nav className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="flex items-center space-x-1 px-2 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 shadow-lg shadow-black/20">
+            <div className="flex items-center p-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 shadow-inner">
               {currentMenuItems.map((item) => {
                 const isActive = isItemActive(item);
                 return (
@@ -174,15 +170,15 @@ const Header = () => {
                     key={item.title}
                     href={item.href}
                     onClick={(e) => handleLinkClick(e, item)}
-                    className={`relative px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
+                    className={`relative px-6 py-2 rounded-full text-sm font-medium transition-colors duration-300 cursor-pointer ${
                       isActive ? 'text-white' : 'text-white/60 hover:text-white'
                     }`}
                   >
                     {isActive && (
                       <motion.div
                         layoutId="nav-pill"
-                        className="absolute inset-0 bg-white/10 rounded-full"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                        className="absolute inset-0 bg-white/10 rounded-full shadow-sm border border-white/5"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
                       />
                     )}
                     <span className="relative z-10">{item.title}</span>
@@ -192,50 +188,56 @@ const Header = () => {
             </div>
           </nav>
 
+          {/* Toggle Switch */}
           <div className="flex-shrink-0">
-            <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm rounded-full p-1 pl-4 border border-white/5 hover:border-white/10 transition-colors">
-              <div className="flex flex-col items-end mr-1">
+            <div className="group flex items-center gap-4 bg-black/40 backdrop-blur-md rounded-full p-1.5 pl-5 border border-white/5 hover:border-white/20 transition-all duration-300 hover:shadow-glow">
+              
+              <div className="flex flex-col items-end mr-1 overflow-hidden h-5">
                 <AnimatePresence mode="wait">
                   <motion.span 
-                    key={isDeveloperMode ? "dev-text" : "content-text"}
-                    initial={{ y: 5, opacity: 0 }}
+                    key={isDeveloperMode ? "dev" : "content"}
+                    initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -5, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-xs font-semibold whitespace-nowrap text-white/80"
+                    exit={{ y: -20, opacity: 0 }}
+                    className="text-xs font-semibold tracking-wide text-white/80"
                   >
-                    {/* The text tells them what clicking will do */}
-                    {isDeveloperMode ? "Turn on Content Mode" : "Turn on Developer Mode"}
+                    {isDeveloperMode ? "Switch to Content" : "Switch to Dev"}
                   </motion.span>
                 </AnimatePresence>
               </div>
               
               <button
                 onClick={handleToggle}
-                className="relative w-12 h-7 rounded-full p-1 transition-colors duration-300 focus:outline-none shadow-inner bg-white/10 hover:bg-white/20"
+                className={`relative w-14 h-8 rounded-full p-1 transition-colors duration-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${
+                  isSwitching ? 'bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.5)]' : 'bg-white/10 hover:bg-white/20 shadow-inner'
+                }`}
               >
-                {/* Knob is always at 'x: 0' (OFF position) */}
                 <motion.div
-                  className="w-5 h-5 bg-white rounded-full shadow-md flex items-center justify-center"
-                  animate={{ x: 0 }} 
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  className="w-6 h-6 bg-white rounded-full shadow-lg flex items-center justify-center"
+                  animate={{ x: isSwitching ? 24 : 0 }} 
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                  {isDeveloperMode ? (
-                    <Palette size={10} className="text-gray-600" />
-                  ) : (
-                    <Code2 size={10} className="text-gray-600" />
-                  )}
+                  <motion.div
+                    animate={{ rotate: isSwitching ? 360 : 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {isSwitching ? (
+                       isDeveloperMode ? <Palette size={12} className="text-blue-600" /> : <Code2 size={12} className="text-blue-600" />
+                    ) : (
+                       isDeveloperMode ? <Palette size={12} className="text-gray-700" /> : <Code2 size={12} className="text-gray-700" />
+                    )}
+                  </motion.div>
                 </motion.div>
               </button>
             </div>
           </div>
         </div>
         
+        {/* Subtle Bottom Gradient Line */}
         <motion.div 
-          className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={{ opacity: 1, scaleX: 1 }}
+          className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
           transition={{ delay: 0.5, duration: 1.5 }}
         />
       </motion.header>
@@ -245,26 +247,25 @@ const Header = () => {
         <motion.header
           className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center transition-all duration-300"
           animate={{
-            y: 0,
-            backgroundColor: (sticky || mobileMenuOpen) ? 'rgba(0,0,0,0.8)' : 'transparent',
-            backdropFilter: (sticky || mobileMenuOpen) ? 'blur(16px)' : 'none',
+            backgroundColor: (sticky || mobileMenuOpen) ? 'rgba(0,0,0,0.85)' : 'transparent',
+            backdropFilter: (sticky || mobileMenuOpen) ? 'blur(20px)' : 'none',
           }}
         >
-          <Link href="/" className="z-50 relative">
-                <Image 
-                  src="/images/logo.png" 
-                  alt="Logo" 
-                  width={120} 
-                  height={32}
-                  className="h-8 w-auto object-contain" 
-                />
+          <Link href="/" className="z-50 relative cursor-pointer">
+             <Image 
+               src="/images/logo.png" 
+               alt="Logo" 
+               width={120} 
+               height={32}
+               className="h-8 w-auto object-contain" 
+             />
           </Link>
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="relative z-50 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/10 backdrop-blur-md"
+            className="relative z-50 w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center cursor-pointer active:scale-90 transition-transform"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24">
+             <svg width="22" height="22" viewBox="0 0 24 24">
               <Path
                 variants={{
                   closed: { d: 'M 4 6 L 20 6' },
@@ -294,72 +295,76 @@ const Header = () => {
           </button>
         </motion.header>
 
+        {/* Mobile Full Screen Menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex flex-col pt-28 px-6 pb-10"
+              variants={mobileMenuVariants}
+              initial="closed"
+              animate="open"
+              exit="closed"
+              className="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl flex flex-col pt-28 px-6 pb-10 overflow-hidden"
             >
-              <nav className="flex flex-col space-y-4">
+              {/* Navigation Links */}
+              <nav className="flex flex-col space-y-3">
                 {currentMenuItems.map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 + idx * 0.05 }}
-                  >
+                  <motion.div variants={mobileItemVariants} key={idx}>
                     <Link
                       href={item.href}
                       onClick={(e) => handleLinkClick(e, item)}
-                      className={`group flex items-center justify-between p-4 rounded-xl border active:scale-95 transition-all cursor-pointer ${isItemActive(item) ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/5'}`}
+                      className={`group flex items-center justify-between p-5 rounded-2xl border transition-all cursor-pointer ${
+                        isItemActive(item) 
+                          ? 'bg-white/10 border-white/20 shadow-lg' 
+                          : 'bg-white/5 border-white/5 hover:bg-white/10'
+                      }`}
                     >
-                      <span className={`text-xl font-medium tracking-wide ${isItemActive(item) ? 'text-white' : 'text-white/70'}`}>{item.title}</span>
-                      <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                      <span className={`text-xl font-medium tracking-wide ${isItemActive(item) ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>
+                        {item.title}
+                      </span>
+                      <ChevronRight className={`w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 ${isItemActive(item) ? 'text-white' : 'text-white/30'}`} />
                     </Link>
                   </motion.div>
                 ))}
               </nav>
 
+              {/* Bottom Controls */}
               <div className="mt-auto space-y-6">
-                <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="p-1 rounded-2xl bg-white/5 border border-white/10"
+                
+                {/* Mobile Toggle */}
+                <motion.div 
+                  variants={mobileItemVariants}
+                  className="p-1.5 rounded-2xl bg-white/5 border border-white/10"
                 >
                   <button 
                     onClick={handleToggle}
-                    className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 transition-all"
+                    className="w-full flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 border border-white/5 transition-all cursor-pointer group"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-white/10 text-white/50">
-                        {isDeveloperMode ? <Palette size={20} /> : <Code2 size={20} />}
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors border border-white/10 ${
+                        isDeveloperMode ? 'bg-blue-600/20 text-blue-400' : 'bg-white/10 text-white/50'
+                      }`}>
+                         {isDeveloperMode ? <Palette size={20} /> : <Code2 size={20} />}
                       </div>
-                      <div className="text-left">
-                        <div className="text-sm text-white font-medium">
-                           {isDeveloperMode ? "Turn on Content Mode" : "Turn on Developer Mode"}
-                        </div>
-                      </div>
+                      <span className="text-sm font-medium text-white/90">
+                         {isDeveloperMode ? "Switch to Content Mode" : "Switch to Developer Mode"}
+                      </span>
                     </div>
                     
-                    {/* Mobile Toggle: Always Off */}
-                    <div className="w-12 h-6 rounded-full p-1 transition-colors duration-300 bg-white/20">
+                    {/* Animated Mobile Knob */}
+                    <div className={`w-14 h-7 rounded-full p-1 transition-colors duration-300 ${isSwitching ? 'bg-blue-600' : 'bg-white/20'}`}>
                       <motion.div 
-                        className="w-4 h-4 bg-white rounded-full shadow-sm"
-                        animate={{ x: 0 }} // Always at 0 (Off)
+                        className="w-5 h-5 bg-white rounded-full shadow-md"
+                        animate={{ x: isSwitching ? 28 : 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 25 }}
                       />
                     </div>
                   </button>
                 </motion.div>
 
+                {/* Social Icons */}
                 <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="flex justify-center items-center space-x-8 pt-4 border-t border-white/10"
+                  variants={mobileItemVariants}
+                  className="flex justify-center items-center space-x-10 pt-6 border-t border-white/10"
                 >
                   {[
                     { Icon: Instagram, href: "https://instagram.com" },
@@ -371,14 +376,13 @@ const Header = () => {
                       href={social.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-white/60 hover:text-white hover:scale-110 transition-all duration-300"
+                      className="text-white/50 hover:text-white hover:scale-110 transition-all duration-300 cursor-pointer p-2"
                     >
-                      <social.Icon size={24} strokeWidth={1.5} />
+                      <social.Icon size={26} strokeWidth={1.5} />
                     </a>
                   ))}
                 </motion.div>
               </div>
-
             </motion.div>
           )}
         </AnimatePresence>
