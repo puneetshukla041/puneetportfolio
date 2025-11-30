@@ -1,19 +1,17 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, SVGMotionProps } from 'framer-motion';
 import { Instagram, Linkedin, Github, ChevronRight, Code2, Palette } from 'lucide-react';
 
-// Define Interface for Menu Items
 interface MenuItem {
   title: string;
   href: string;
 }
 
-// Component definition moved outside Header
 const Path = (props: SVGMotionProps<SVGPathElement>) => (
   <motion.path
     fill="transparent"
@@ -26,84 +24,60 @@ const Path = (props: SVGMotionProps<SVGPathElement>) => (
 
 const Header = () => {
   const router = useRouter();
+  const pathname = usePathname();
 
-  // FIX 1: Use the useState initializer function to get the initial pathname.
-  // This runs only once during the initial render and safely checks for 'window'.
-  const [pathname, setPathname] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.location.pathname;
-    }
-    return '/'; // Default value for server-side render (SSR)
-  });
-  
-  // State initialization
-  const [isToggled, setIsToggled] = useState(false);
+  // Determine current mode purely for Navigation Logic and Text Labels
+  const isDeveloperMode = pathname?.includes('/developer');
+
+  // UI States
   const [sticky, setSticky] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  // New State for Scrollspy
   const [activeSection, setActiveSection] = useState('Home');
 
   const lastScrollY = useRef(0);
 
-  // 1. Sync State with URL on Mount (Removed the problematic useEffect)
-  // The state initializer above handles the initial sync, removing the ESLint error.
-  
-  // 2. ScrollSpy Logic (Only runs on /content)
+  // Toggle Handler: Simply pushes the opposite route
+  const handleToggle = () => {
+    if (isDeveloperMode) {
+      router.push('/content');
+    } else {
+      router.push('/developer');
+    }
+  };
+
+  // ScrollSpy Logic (Only for /content page)
   useEffect(() => {
-    // pathname is now correctly initialized, so this logic is fine.
-    const isContentPage = pathname.includes('/content');
-    if (!isContentPage) return;
+    if (isDeveloperMode) return;
 
     const sections = [
       { id: 'section-1', name: 'Home' },
       { id: 'section-2', name: 'Gallery' },
       { id: 'section-3', name: 'Films' },
-      { id: 'section-4', name: 'Films' }, // Maps to same tab
+      { id: 'section-4', name: 'Films' },
       { id: 'section-5', name: 'Contact Us' }
     ];
 
     const handleScrollSpy = () => {
-      const scrollPosition = window.scrollY + 150; // Offset for header height
-
+      const scrollPosition = window.scrollY + 150;
       for (const section of sections) {
         const element = document.getElementById(section.id);
         if (element) {
           const offsetTop = element.offsetTop;
           const offsetBottom = offsetTop + element.offsetHeight;
-
           if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
             setActiveSection(section.name);
-            break; // Found the active section, stop checking
+            break;
           }
         }
       }
     };
 
     window.addEventListener('scroll', handleScrollSpy);
-    handleScrollSpy(); // Initial check
+    handleScrollSpy();
     return () => window.removeEventListener('scroll', handleScrollSpy);
-  }, [pathname]);
+  }, [pathname, isDeveloperMode]);
 
-
-  // 3. Robust Toggle Handler
-  const handleToggle = () => {
-    // Read window.location.pathname inside the handler
-    const currentPath = window.location.pathname;
-    const isOnDevPage = currentPath.includes('/developer');
-    
-    setIsToggled(prev => !prev);
-    
-    setTimeout(() => {
-      if (isOnDevPage) {
-        router.push('/content');
-      } else {
-        router.push('/developer');
-      }
-    }, 400);
-  };
-
-  // 4. Navigation Handler
+  // Navigation Handler
   const handleLinkClick = (e: React.MouseEvent, item: MenuItem) => {
     if (item.href.startsWith('#')) {
       e.preventDefault();
@@ -111,16 +85,13 @@ const Header = () => {
       const element = document.getElementById(elementId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
-        setActiveSection(item.title); // Immediate UI update
+        setActiveSection(item.title);
       }
-    } else {
-        // For standard pages, let Next/Link handle it, 
-        // but we update state for UI feedback
-        setPathname(item.href);
     }
     setMobileMenuOpen(false);
   };
 
+  // Sticky Header Logic
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
@@ -134,12 +105,11 @@ const Header = () => {
         ticking = true;
       }
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // --- MENU CONFIGURATION ---
+  // Menu Configuration
   const developerMenuItems: MenuItem[] = [
     { title: 'Home', href: '/' },
     { title: 'Gallery', href: '/gallery' },
@@ -148,7 +118,6 @@ const Header = () => {
     { title: 'Contact', href: '/contact' },
   ];
 
-  // Specific menu for /content page
   const contentMenuItems: MenuItem[] = [
     { title: 'Home', href: '#section-1' },
     { title: 'Gallery', href: '#section-2' },
@@ -156,11 +125,10 @@ const Header = () => {
     { title: 'Contact Us', href: '#section-5' },
   ];
 
-  const currentMenuItems = pathname.includes('/content') ? contentMenuItems : developerMenuItems;
+  const currentMenuItems = !isDeveloperMode ? contentMenuItems : developerMenuItems;
 
-  // Helper to check active state
   const isItemActive = (item: MenuItem) => {
-    if (pathname.includes('/content')) {
+    if (!isDeveloperMode) {
       return activeSection === item.title;
     }
     return pathname === item.href;
@@ -185,14 +153,14 @@ const Header = () => {
           <div className="flex-shrink-0 z-50 cursor-pointer">
             <Link href="/" className="block relative group">
               <div className="relative flex items-center">
-                   <Image 
-                     src="/images/logo.png" 
-                     alt="Logo" 
-                     width={150}
-                     height={40}
-                     className="h-10 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80" 
-                     priority
-                   />
+                    <Image 
+                      src="/images/logo.png" 
+                      alt="Logo" 
+                      width={150}
+                      height={40}
+                      className="h-10 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80" 
+                      priority
+                    />
               </div>
             </Link>
           </div>
@@ -229,33 +197,34 @@ const Header = () => {
               <div className="flex flex-col items-end mr-1">
                 <AnimatePresence mode="wait">
                   <motion.span 
-                    key={pathname.includes('/developer') ? "dev-text" : "content-text"}
+                    key={isDeveloperMode ? "dev-text" : "content-text"}
                     initial={{ y: 5, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -5, opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className={`text-xs font-semibold whitespace-nowrap ${isToggled ? "text-blue-400" : "text-white"}`}
+                    className="text-xs font-semibold whitespace-nowrap text-white/80"
                   >
-                    {pathname.includes('/developer') ? "Turn on Developer Mode" : "Turn on Content Mode"}
+                    {/* The text tells them what clicking will do */}
+                    {isDeveloperMode ? "Turn on Content Mode" : "Turn on Developer Mode"}
                   </motion.span>
                 </AnimatePresence>
               </div>
               
               <button
                 onClick={handleToggle}
-                className={`relative w-12 h-7 rounded-full p-1 transition-colors duration-300 focus:outline-none shadow-inner ${
-                  isToggled ? 'bg-blue-600/90' : 'bg-white/10'
-                }`}
+                className="relative w-12 h-7 rounded-full p-1 transition-colors duration-300 focus:outline-none shadow-inner bg-white/10 hover:bg-white/20"
               >
+                {/* Knob is always at 'x: 0' (OFF position) */}
                 <motion.div
                   className="w-5 h-5 bg-white rounded-full shadow-md flex items-center justify-center"
-                  animate={{ x: isToggled ? 20 : 0 }}
+                  animate={{ x: 0 }} 
+                  whileTap={{ scale: 0.9 }}
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
                 >
-                  {isToggled ? (
-                    <Code2 size={10} className="text-blue-600" />
-                  ) : (
+                  {isDeveloperMode ? (
                     <Palette size={10} className="text-gray-600" />
+                  ) : (
+                    <Code2 size={10} className="text-gray-600" />
                   )}
                 </motion.div>
               </button>
@@ -271,6 +240,7 @@ const Header = () => {
         />
       </motion.header>
 
+      {/* --- MOBILE HEADER --- */}
       <div className="md:hidden">
         <motion.header
           className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center transition-all duration-300"
@@ -281,13 +251,13 @@ const Header = () => {
           }}
         >
           <Link href="/" className="z-50 relative">
-               <Image 
-                 src="/images/logo.png" 
-                 alt="Logo" 
-                 width={120} 
-                 height={32}
-                 className="h-8 w-auto object-contain" 
-               />
+                <Image 
+                  src="/images/logo.png" 
+                  alt="Logo" 
+                  width={120} 
+                  height={32}
+                  className="h-8 w-auto object-contain" 
+                />
           </Link>
 
           <button
@@ -364,20 +334,21 @@ const Header = () => {
                     className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 transition-all"
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isToggled ? 'bg-blue-600 text-white' : 'bg-white/10 text-white/50'}`}>
-                        {isToggled ? <Code2 size={20} /> : <Palette size={20} />}
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-white/10 text-white/50">
+                        {isDeveloperMode ? <Palette size={20} /> : <Code2 size={20} />}
                       </div>
                       <div className="text-left">
                         <div className="text-sm text-white font-medium">
-                          {pathname.includes('/developer') ? "Turn on Developer Mode" : "Turn on Content Mode"}
+                           {isDeveloperMode ? "Turn on Content Mode" : "Turn on Developer Mode"}
                         </div>
                       </div>
                     </div>
                     
-                    <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ${isToggled ? 'bg-blue-600' : 'bg-white/20'}`}>
+                    {/* Mobile Toggle: Always Off */}
+                    <div className="w-12 h-6 rounded-full p-1 transition-colors duration-300 bg-white/20">
                       <motion.div 
                         className="w-4 h-4 bg-white rounded-full shadow-sm"
-                        animate={{ x: isToggled ? 24 : 0 }}
+                        animate={{ x: 0 }} // Always at 0 (Off)
                         transition={{ type: "spring", stiffness: 400, damping: 25 }}
                       />
                     </div>
