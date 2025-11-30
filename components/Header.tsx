@@ -24,33 +24,14 @@ const Path = (props: SVGMotionProps<SVGPathElement>) => (
   />
 );
 
-// Helper function to safely get client-side state during initialization
-const getInitialPathState = () => {
-  if (typeof window !== 'undefined') {
-    const currentPath = window.location.pathname;
-    return {
-      pathname: currentPath,
-      isToggled: currentPath.includes('/developer'),
-    };
-  }
-  return {
-    pathname: '/',
-    isToggled: false,
-  };
-};
-
 const Header = () => {
   const router = useRouter();
 
-  // 1. 🚀 FIX: State Initialization (Replaced old useEffect 1)
-  const initialState = getInitialPathState();
-  const [pathname, setPathname] = useState(initialState.pathname);
-  // We use the derived value from initialState, but default to false for simple consistency,
-  // or use the derived value if the toggle state needs to reflect the initial URL immediately.
-  // We'll stick to 'false' initialization as the toggle state is usually derived/managed elsewhere.
-  const [isToggled, setIsToggled] = useState(initialState.isToggled);
-  
+  // State initialization
+  const [pathname, setPathname] = useState('/');
+  const [isToggled, setIsToggled] = useState(false);
   const [sticky, setSticky] = useState(false);
+  // Removed unused headerVisible
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // New State for Scrollspy
@@ -58,7 +39,14 @@ const Header = () => {
 
   const lastScrollY = useRef(0);
 
-  // ⚠️ Removed the faulty useEffect block (lines 44-49) entirely.
+  // 1. Sync State with URL on Mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname;
+      setPathname(currentPath);
+      setIsToggled(false);
+    }
+  }, []);
 
   // 2. ScrollSpy Logic (Only runs on /content)
   useEffect(() => {
@@ -129,6 +117,8 @@ const Header = () => {
     }
     setMobileMenuOpen(false);
   };
+
+  // ⚠️ Original Path definition removed from here (lines 110-118)
 
   useEffect(() => {
     let ticking = false;
