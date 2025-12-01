@@ -30,23 +30,23 @@ interface TimelineData {
   theme: ThemeColors;
 }
 
-// --- Data ---
+// --- Data (Stored: Newest -> Oldest) ---
 const rawTimelineData: TimelineData[] = [
   {
     id: 'ssi',
     role: "Software Engineer",
-    company: "SS Innovations",
+    company: "SS Innovations International, Inc.",
     period: "Apr 2025 - Present",
     location: "Gurugram, India",
     logo: "/logos/ssi.jpeg",
     type: "Full-time",
-    description: "Architecting the next generation of surgical robotics software and ecosystem platforms.",
+    description: "Leading development of advanced web/mobile applications solving real-world problems. My key initiative, 'SSI Studios', is an all-in-one ecosystem designed to empower the organization.",
     points: [
-      "Spearheaded 'SSI Studios', an enterprise-grade creative platform.",
-      "Engineered high-performance UI engines reducing render time by 40%.",
-      "Standardized the frontend architecture across the SSI ecosystem."
+      "Built 'SSI Studios', a creative platform consolidating logo/poster editing and certificate generation.",
+      "Designed utilities like ID card makers and image enhancers to empower non-technical staff.",
+      "Reduced dependence on external apps, ensuring consistent, branded outputs across the company."
     ],
-    tech: ["Next.js", "React Native", "System Design"],
+    tech: ["Next.js", "React Native", "System Design", "CI/CD"],
     current: true,
     theme: {
       name: "cyan",
@@ -60,19 +60,20 @@ const rawTimelineData: TimelineData[] = [
   },
   {
     id: 'disney',
-    role: "SDE Intern",
+    role: "Software Engineer Intern",
     company: "Disney+ Hotstar",
     period: "Oct 2023 - Mar 2024",
-    location: "Remote",
+    location: "Bengaluru (Remote)",
     logo: "/logos/disney.webp",
     type: "Internship",
-    description: "Backend scalability for one of the world's largest streaming platforms during ICC World Cup.",
+    description: "Backend API development and scalability projects for high-traffic services, ensuring seamless user experiences during peak loads.",
     points: [
-      "Optimized high-throughput APIs serving 50M+ concurrent users.",
-      "Enhanced the Messenger Service architecture for real-time delivery.",
-      "Reduced database latency by optimizing Redis caching strategies."
+      "Supported backend APIs for Messenger Service: audit logging & retry handling.",
+      "Enhanced Offer Service scalability via cache loader improvements & partition validations.",
+      "Integrated Entitlement SDK with dynamic frontend logic for user entitlements.",
+      "Optimized database queries to improve Payments Service scalability."
     ],
-    tech: ["Go", "Kafka", "Redis"],
+    tech: ["Go", "Kafka", "Redis", "Backend API"],
     theme: {
       name: "indigo",
       primary: "text-indigo-400",
@@ -85,19 +86,20 @@ const rawTimelineData: TimelineData[] = [
   },
   {
     id: 'medanta',
-    role: "Tech Intern",
+    role: "Intern",
     company: "Medanta",
     period: "May 2023 - Aug 2023",
-    location: "Gurugram",
+    location: "Gurugram, India",
     logo: "/logos/medanta.png",
     type: "Internship",
-    description: "Security compliance and automation for critical healthcare infrastructure.",
+    description: "Quality assurance and security compliance for critical healthcare infrastructure.",
     points: [
-      "Automated regression testing suites using Python & Selenium.",
-      "Audited API endpoints for HIPAA/GDPR security compliance.",
-      "Implemented CI/CD pipelines for QA environments."
+      "Performed extensive API testing using Postman to validate data integrity.",
+      "Managed version control through Git/GitHub for smooth team collaboration.",
+      "Designed automated test cases ensuring quality of healthcare applications.",
+      "Conducted vulnerability assessments for secure patient data handling."
     ],
-    tech: ["Python", "Automation", "Security"],
+    tech: ["Postman", "Python", "QA Automation", "Security"],
     theme: {
       name: "rose",
       primary: "text-rose-400",
@@ -135,9 +137,10 @@ const rawTimelineData: TimelineData[] = [
   }
 ];
 
+// --- ORDER CHANGE: Reverse array to show Education (Oldest) First ---
 const timelineData = [...rawTimelineData].reverse();
 
-// --- SCRAMBLE TEXT COMPONENT (Updated to use trigger prop) ---
+// --- SCRAMBLE TEXT COMPONENT ---
 const ScrambleText = ({ text, className, trigger }: { text: string, className?: string, trigger: boolean }) => {
   const [display, setDisplay] = useState(text);
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
@@ -157,8 +160,6 @@ const ScrambleText = ({ text, className, trigger }: { text: string, className?: 
         }, 30);
         return () => clearInterval(interval);
     } else {
-        // Optional: Reset text when not hovering, or keep it static. 
-        // We keep it static for better UX, resetting only on re-trigger.
         setDisplay(text);
     }
   }, [trigger, text]);
@@ -172,7 +173,12 @@ const ScrambleText = ({ text, className, trigger }: { text: string, className?: 
 
 const Section2 = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start 10%", "end 90%"] });
+  
+  const { scrollYProgress } = useScroll({ 
+    target: containerRef, 
+    offset: ["start 10%", "end 90%"] 
+  });
+  
   const height = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   return (
@@ -181,7 +187,6 @@ const Section2 = () => {
       {/* --- Cyberpunk Grid Background --- */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none perspective-500">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
-        {/* Glow Orbs */}
         <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-cyan-900/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[120px]" />
       </div>
@@ -213,12 +218,13 @@ const Section2 = () => {
         {/* --- The Journey Map --- */}
         <div ref={containerRef} className="relative">
           
-          {/* Central Backbone */}
+          {/* Central Backbone - Masked for smooth fade out */}
           <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 md:translate-x-0 z-0">
-             <div className="absolute inset-0 w-full h-full bg-neutral-800/30"></div>
+             <div className="absolute inset-0 w-full h-full bg-neutral-800/30 [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)]"></div>
+             
              <motion.div 
                 style={{ height: useTransform(height, [0, 1], ["0%", "100%"]) }}
-                className="absolute top-0 left-0 w-full bg-gradient-to-b from-cyan-500 via-indigo-500 to-rose-500 shadow-[0_0_20px_rgba(6,182,212,0.6)]"
+                className="absolute top-0 left-0 w-full bg-gradient-to-b from-amber-500 via-rose-500 to-cyan-500 shadow-[0_0_20px_rgba(6,182,212,0.6)] [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_100%)]"
              />
           </div>
 
@@ -246,11 +252,10 @@ const TimelineCard = ({ data, index, isLeft }: { data: TimelineData, index: numb
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   
-  // New state to track if the card is hovered
   const [isHovered, setIsHovered] = useState(false);
 
-  const rotateX = useTransform(y, [-0.5, 0.5], [5, -5]); // Tilt Up/Down
-  const rotateY = useTransform(x, [-0.5, 0.5], [-5, 5]); // Tilt Left/Right
+  const rotateX = useTransform(y, [-0.5, 0.5], [5, -5]);
+  const rotateY = useTransform(x, [-0.5, 0.5], [-5, 5]);
 
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
     const { left, top, width, height } = currentTarget.getBoundingClientRect();
@@ -315,7 +320,7 @@ const TimelineCard = ({ data, index, isLeft }: { data: TimelineData, index: numb
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
         >
-            {/* HOLOGRAPHIC BORDER GLOW - (Fixed from previous build error: Use motion.div) */}
+            {/* HOLOGRAPHIC BORDER GLOW */}
             <motion.div 
                 className="absolute -inset-[1px] rounded-2xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500" 
                 style={{
@@ -347,7 +352,6 @@ const TimelineCard = ({ data, index, isLeft }: { data: TimelineData, index: numb
                              </div>
                              <div>
                                 <h3 className={`text-xl font-bold text-white group-hover/card:text-${data.theme.name}-200 transition-colors`}>
-                                    {/* Trigger prop passed here */}
                                     <ScrambleText text={data.role} trigger={isHovered} />
                                 </h3>
                                 <div className={`text-sm font-medium tracking-wide ${data.theme.primary} flex items-center gap-2`}>
@@ -375,6 +379,16 @@ const TimelineCard = ({ data, index, isLeft }: { data: TimelineData, index: numb
                             {data.description}
                         </p>
                     </div>
+
+                    {/* Points */}
+                    <ul className="space-y-3">
+                        {data.points.map((point, i) => (
+                            <li key={i} className="flex items-start gap-3 text-sm text-neutral-400 group/point">
+                                <span className={`mt-1.5 w-1.5 h-1.5 rounded-full bg-neutral-600 group-hover/card:bg-${data.theme.name}-400 transition-colors shadow-[0_0_5px_currentColor] flex-shrink-0`} />
+                                <span className="group-hover/card:text-neutral-300 transition-colors">{point}</span>
+                            </li>
+                        ))}
+                    </ul>
 
                     {/* Tech Stack (Glow on Hover) */}
                     <div className="flex flex-wrap gap-2 pt-2">
