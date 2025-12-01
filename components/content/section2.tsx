@@ -64,14 +64,7 @@ const getAllImages = (): PortfolioItem[] => {
   // 4. Spiritual (Vrindavan, Mathura, Holi)
   add('A Beautiful evening in vrindavan 🌌.heic', 'Vrindavan Evening', 'Spiritual');
   add('Experience the divine colors of love and devotion, where every splash tells the story of Krishn.heic', 'Divine Colors', 'Spiritual');
-  add('Nandgaon Holi 🌈#vrindhavan #holi #nandgaon #barsana #nandgaonholi.heic', 'Nandgaon Holi', 'Festival');
   
-  // Sacred Vibes Series (Loop 1 to 7)
-  add('Let the sacred vibes of Mathura nourish your soul✨...#Vrindavan #Mathura #RadhaKrishna #DivineV.heic', 'Sacred Vibes', 'Spiritual');
-  for (let i = 1; i <= 7; i++) {
-    add(`Let the sacred vibes of Mathura nourish your soul✨...#Vrindavan #Mathura #RadhaKrishna #DivineV (${i}).heic`, `Sacred Vibes ${i}`, 'Spiritual');
-  }
-
   // 5. Mood / Life
   add('Comment some captions 🙂.heic', 'Untitled Mood', 'Mood');
   add('Comment some captions 🙂 (1).heic', 'Untitled Mood II', 'Mood');
@@ -121,10 +114,6 @@ const getAllImages = (): PortfolioItem[] => {
   add('The last of Us...heic', 'The Last of Us', 'Cinematic');
   add('The young nights in the hostels are unforgettable ✨.heic', 'Hostel Nights', 'Life');
 
-  // 13. Brand Assets (Found in your list)
-  add('logo.png', 'Logo Asset', 'Brand');
-  add('psm.png', 'PSM Asset', 'Brand');
-
   return items;
 };
 
@@ -170,7 +159,7 @@ const goldenSeries: PortfolioItem[] = [
   },
 ];
 
-// --- COMPONENT: Static Grid Item (Fixed Visibility) ---
+// --- COMPONENT: Interactive Grid Item ---
 interface GridItemProps {
   item: PortfolioItem;
   onClick: (item: PortfolioItem) => void;
@@ -181,33 +170,37 @@ const GridItem = ({ item, onClick, index }: GridItemProps) => {
   return (
     <div 
       onClick={() => onClick(item)}
-      className="relative cursor-pointer overflow-hidden flex flex-col gap-2"
+      // Added group hover effects for smooth lifting and brightness
+      className="group relative cursor-pointer flex flex-col gap-2 transition-transform duration-500 hover:-translate-y-2"
     >
-      <div className="relative w-full overflow-hidden bg-neutral-900 aspect-video ring-1 ring-white/10 rounded-sm"> 
+      <div className="relative w-full overflow-hidden bg-neutral-900 aspect-video ring-1 ring-white/10 rounded-sm shadow-lg group-hover:shadow-2xl group-hover:shadow-yellow-500/10 transition-all duration-500"> 
         {/* Fallback background */}
         <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center text-neutral-700">
            <span className="text-4xl opacity-20">{item.category[0]}</span>
         </div>
         
-        {/* ADDED 'relative z-10' to ensure image sits ON TOP of the fallback background */}
+        {/* Image - Scales slightly on hover */}
         <img
           src={item.src}
           alt={item.title}
           width={item.width}
           height={item.height}
-          className="relative z-10 w-full h-full object-cover opacity-100" 
+          className="relative z-10 w-full h-full object-cover opacity-100 transition-transform duration-700 ease-out group-hover:scale-105" 
           onError={(e) => {
              e.currentTarget.style.display = 'none';
           }}
         />
+        
+        {/* Subtle highlight border on hover */}
+        <div className="absolute inset-0 border-2 border-transparent group-hover:border-yellow-500/30 z-20 transition-colors duration-300 rounded-sm pointer-events-none"></div>
       </div>
 
-      <div className="w-full py-2 border-b border-white/5">
+      <div className="w-full py-2 border-b border-white/5 group-hover:border-yellow-500/50 transition-colors duration-300">
         <div className="flex justify-between items-center">
-          <h4 className="text-sm font-bold tracking-tight text-white truncate max-w-[150px]">
+          <h4 className="text-sm font-bold tracking-tight text-white truncate max-w-[150px] group-hover:text-yellow-500 transition-colors duration-300">
             {item.title}
           </h4>
-          <span className="text-[10px] font-medium tracking-widest text-neutral-500 uppercase">
+          <span className="text-[10px] font-medium tracking-widest text-neutral-500 uppercase group-hover:text-white transition-colors duration-300">
             {item.category}
           </span>
         </div>
@@ -307,6 +300,9 @@ const Section2 = () => {
     });
   };
 
+  // Helper for smoother button interactions
+  const buttonClass = "cursor-pointer active:scale-95 transition-all duration-200";
+
   return (
     <section id="section-2" className="relative w-full min-h-screen bg-black text-white py-20 sm:py-32 selection:bg-yellow-500 selection:text-black">
       
@@ -331,21 +327,21 @@ const Section2 = () => {
              <div className="flex items-center gap-2 p-1 bg-white/10 rounded-full backdrop-blur-md border border-white/5">
                 <button 
                   onClick={handleShare}
-                  className="p-3 rounded-full hover:bg-white/10 text-white hover:text-yellow-500 transition-colors"
+                  className={`p-3 rounded-full hover:bg-white/10 text-white hover:text-yellow-500 ${buttonClass}`}
                   title="Share"
                 >
                   <Share2 className="w-5 h-5" />
                 </button>
                 <button 
                   onClick={handleDownload}
-                  className="p-3 rounded-full hover:bg-white/10 text-white hover:text-yellow-500 transition-colors"
+                  className={`p-3 rounded-full hover:bg-white/10 text-white hover:text-yellow-500 ${buttonClass}`}
                   title="Download"
                 >
                   <Download className="w-5 h-5" />
                 </button>
                 <div className="w-[1px] h-6 bg-white/20 mx-1"></div>
                 <button 
-                  className="p-3 rounded-full hover:bg-red-500/80 hover:text-white text-white transition-colors"
+                  className={`p-3 rounded-full hover:bg-red-500/80 hover:text-white text-white ${buttonClass}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedImage(null);
@@ -358,14 +354,14 @@ const Section2 = () => {
           </div>
 
           <button 
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-3 bg-white/5 hover:bg-yellow-500 hover:text-black rounded-full transition-all hidden md:block"
+              className={`absolute left-4 top-1/2 -translate-y-1/2 z-50 p-3 bg-white/5 hover:bg-yellow-500 hover:text-black rounded-full hidden md:block ${buttonClass}`}
               onClick={(e) => handlePrev(e)}
           >
             <ChevronLeft className="w-8 h-8" />
           </button>
 
           <button 
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-3 bg-white/5 hover:bg-yellow-500 hover:text-black rounded-full transition-all hidden md:block"
+              className={`absolute right-4 top-1/2 -translate-y-1/2 z-50 p-3 bg-white/5 hover:bg-yellow-500 hover:text-black rounded-full hidden md:block ${buttonClass}`}
               onClick={(e) => handleNext(e)}
           >
             <ChevronRight className="w-8 h-8" />
@@ -439,10 +435,10 @@ const Section2 = () => {
                  setVisibleCount(15); 
                }}
                className={`
-                 px-4 py-2 text-xs font-bold tracking-widest uppercase rounded-full border transition-all duration-300 flex-shrink-0
+                 px-4 py-2 text-xs font-bold tracking-widest uppercase rounded-full border transition-all duration-300 flex-shrink-0 cursor-pointer active:scale-95
                  ${activeCategory === cat 
                    ? 'bg-yellow-500 text-black border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.3)]' 
-                   : 'bg-transparent text-neutral-400 border-white/10 hover:border-white/40 hover:text-white'}
+                   : 'bg-transparent text-neutral-400 border-white/10 hover:border-white/40 hover:text-white hover:bg-white/5'}
                `}
              >
                {cat}
@@ -474,8 +470,9 @@ const Section2 = () => {
           <div className="flex flex-col items-center justify-center mt-20 gap-6">
             <div className="h-16 w-[1px] bg-gradient-to-b from-white/0 via-yellow-500 to-white/0 animate-pulse" />
             <button 
-              onClick={() => setVisibleCount(prev => Math.min(prev + 10, filteredItems.length))}
-              className="group relative px-10 py-4 bg-neutral-900 hover:bg-yellow-500 hover:text-black text-white text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 ring-1 ring-white/10 hover:ring-yellow-500 hover:shadow-[0_0_30px_rgba(234,179,8,0.4)]"
+              // UPDATED: Increment by 30
+              onClick={() => setVisibleCount(prev => Math.min(prev + 30, filteredItems.length))}
+              className={`group relative px-10 py-4 bg-neutral-900 hover:bg-yellow-500 hover:text-black text-white text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 ring-1 ring-white/10 hover:ring-yellow-500 hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] ${buttonClass}`}
             >
               <span className="flex items-center gap-3">
                 Load More ({filteredItems.length - visibleCount})
@@ -499,95 +496,83 @@ const Section2 = () => {
         </div>
       </div>
 
-      {/* ---------------- PART 2: THE GOLDEN SERIES (No Hover Effects) ---------------- */}
+      {/* ---------------- PART 2: THE GOLDEN SERIES (Professional Redesign) ---------------- */}
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        <div className="mb-16 border-l-4 border-yellow-500 pl-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div className="mb-20 border-b border-white/10 pb-8 flex flex-col md:flex-row justify-between items-end gap-6">
           <div>
-            <h2 className="text-sm font-bold tracking-[0.4em] text-yellow-500 mb-2 uppercase">
-               Featured Series
+            <h2 className="text-sm font-bold tracking-[0.4em] text-yellow-500 mb-2 uppercase flex items-center gap-3">
+               <span className="w-8 h-[1px] bg-yellow-500"></span>
+               Featured Collections
             </h2>
-            <h3 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tight leading-none">
+            <h3 className="text-4xl md:text-5xl font-medium text-white tracking-tight">
                Golden Hour
             </h3>
           </div>
           <button 
              onClick={handleViewFullGallery}
-             className="hidden md:flex items-center gap-2 text-sm font-bold text-neutral-400 hover:text-white transition-colors uppercase tracking-widest"
+             className={`hidden md:flex items-center gap-2 text-sm font-bold text-neutral-400 hover:text-white transition-colors uppercase tracking-widest ${buttonClass}`}
           >
              View Archive <ArrowRight className="w-4 h-4" />
           </button>
         </div>
 
         <div className="space-y-32">
-          {/* Feature 1 - Static Text */}
-          <div 
-            className="group relative w-full overflow-hidden shadow-2xl cursor-pointer"
-            onClick={() => setSelectedImage(goldenSeries[0])}
-          >
-             {/* Aspect Ratio 21/9 */}
-             <div className="relative w-full aspect-[21/9] overflow-hidden ring-1 ring-white/10">
-               {/* Fixed gradient */}
-               <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100" />
+          {/* Feature 1 - Cinematic Landscape */}
+          <div className="group relative w-full max-w-6xl mx-auto cursor-pointer" onClick={() => setSelectedImage(goldenSeries[0])}>
+             <div className="relative w-full overflow-hidden bg-neutral-900">
+               {/* Overlay is slightly stronger to make text readable, but fades on hover for clarity */}
+               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 opacity-70 group-hover:opacity-50 transition-opacity duration-700" />
                
+               {/* FIX: Using w-full h-auto (no fixed aspect ratio) 
+                  This ensures NO cropping. The image's natural height determines the container.
+               */}
                <img
                  src={goldenSeries[0].src}
                  alt={goldenSeries[0].title}
-                 width={goldenSeries[0].width}
-                 height={goldenSeries[0].height}
-                 className="w-full h-full object-cover object-center opacity-100"
+                 className="w-full h-auto object-contain transition-transform duration-1000" // NO ZOOM
                  onError={(e) => e.currentTarget.style.display = 'none'}
                />
                
-               <div className="absolute bottom-0 left-0 p-8 md:p-12 z-20">
-                  <span className="inline-block px-3 py-1 mb-4 text-[10px] font-bold tracking-[0.2em] text-black bg-yellow-500 uppercase">
-                    Editor's Pick
-                  </span>
-                  <h4 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-2">
-                    {goldenSeries[0].title}
-                  </h4>
-                  <p className="text-lg tracking-wider font-light text-gray-300">
-                    {goldenSeries[0].subtitle}
-                  </p>
+               <div className="absolute bottom-8 left-8 z-20 transition-transform duration-500 group-hover:-translate-y-2">
+                  <p className="text-xs font-bold text-yellow-500 uppercase tracking-widest mb-2">Editor's Pick</p>
+                  <h3 className="text-3xl md:text-4xl font-semibold text-white mb-1">{goldenSeries[0].title}</h3>
+                  <p className="text-sm text-white/70 font-light">{goldenSeries[0].subtitle}</p>
                </div>
-            </div>
+             </div>
           </div>
 
-          {/* Wide Layout with Interactive Action */}
-          <div className="py-12 border-t border-neutral-800">
-            <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
-              <div 
-                className="w-full lg:w-3/4 overflow-hidden aspect-video bg-neutral-900 relative ring-1 ring-white/5 cursor-pointer shadow-2xl shadow-yellow-900/5 hover:shadow-yellow-500/10 transition-shadow duration-500"
-                onClick={() => setSelectedImage(goldenSeries[3])}
-              >
-                <img
-                  src={goldenSeries[3].src}
-                  alt={goldenSeries[3].title}
-                  width={goldenSeries[3].width}
-                  height={goldenSeries[3].height}
-                  className="w-full h-full object-cover"
-                  onError={(e) => e.currentTarget.style.display = 'none'}
-                />
-              </div>
+          {/* Wide Layout with Final Chapter */}
+          <div className="flex flex-col md:flex-row gap-12 md:gap-20 items-center justify-center py-12 border-t border-white/5">
+            <div 
+              className="w-full max-w-md md:w-1/2 overflow-hidden bg-neutral-900 cursor-pointer group shadow-2xl"
+              onClick={() => setSelectedImage(goldenSeries[3])}
+            >
+              {/* FIX: Using w-full h-auto (no fixed aspect ratio) 
+                 This ensures original format is respected.
+              */}
+              <img
+                src={goldenSeries[3].src}
+                alt={goldenSeries[3].title}
+                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+                onError={(e) => e.currentTarget.style.display = 'none'}
+              />
+            </div>
 
-              <div className="w-full lg:w-1/4 space-y-8 relative">
-                <div className="hidden lg:block absolute -left-10 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-yellow-500/50 to-transparent" />
-                <div>
-                  <span className="block text-xs font-bold text-yellow-600 mb-3 tracking-[0.2em] animate-pulse">FINAL CHAPTER</span>
-                  <h4 className="text-4xl md:text-5xl font-medium text-white tracking-tight leading-none">{goldenSeries[3].title}</h4>
-                  <p className="text-sm text-gray-500 mt-2">{goldenSeries[3].subtitle}</p>
-                </div>
-                <p className="text-neutral-400 leading-relaxed font-light text-lg">
-                  Explore the complete archive of visual stories, captured across different seasons and cities.
-                </p>
-                
-                <button 
-                  onClick={handleViewFullGallery}
-                  className="group flex items-center gap-3 text-xs font-bold tracking-[0.2em] text-white border-b border-white pb-2 hover:text-yellow-500 hover:border-yellow-500 transition-colors uppercase pt-4"
-                >
-                  View Full Gallery
-                  <ArrowRight className="w-4 h-4 transform group-hover:translate-x-2 transition-transform" />
-                </button>
+            <div className="w-full md:w-1/2 space-y-6 text-center md:text-left">
+              <div>
+                <span className="text-xs font-bold text-yellow-500 tracking-[0.2em] uppercase mb-2 block">Final Chapter</span>
+                <h3 className="text-4xl md:text-5xl font-medium text-white mb-2">{goldenSeries[3].title}</h3>
+                <p className="text-lg text-white/60 font-light">{goldenSeries[3].subtitle}</p>
               </div>
+              <p className="text-neutral-400 leading-relaxed max-w-md mx-auto md:mx-0">
+                Explore the complete archive of visual stories, captured across different seasons and cities.
+              </p>
+              <button 
+                onClick={handleViewFullGallery}
+                className={`inline-flex items-center gap-3 text-sm font-bold tracking-widest uppercase text-white border-b border-white/30 pb-1 hover:border-yellow-500 hover:text-yellow-500 transition-colors pt-4 ${buttonClass}`}
+              >
+                View Full Gallery
+              </button>
             </div>
           </div>
         </div>
@@ -604,7 +589,7 @@ const Section2 = () => {
           <p className="text-neutral-500 text-sm tracking-widest uppercase">Available for freelance & collaborations</p>
           <button 
             onClick={handleConnect}
-            className="group relative px-8 py-4 bg-white text-black hover:bg-yellow-500 transition-colors duration-300 rounded-sm font-bold tracking-[0.2em] uppercase text-xs overflow-hidden"
+            className={`group relative px-8 py-4 bg-white text-black hover:bg-yellow-500 transition-colors duration-300 rounded-sm font-bold tracking-[0.2em] uppercase text-xs overflow-hidden ${buttonClass}`}
           >
             <span className="relative z-10 flex items-center gap-3">
               <Mail className="w-4 h-4" />
@@ -614,9 +599,9 @@ const Section2 = () => {
         </div>
 
         <div className="mt-20 flex justify-center gap-8 text-neutral-600 text-xs tracking-widest">
-           <span className="hover:text-white cursor-pointer transition-colors">INSTAGRAM</span>
-           <span className="hover:text-white cursor-pointer transition-colors">TWITTER</span>
-           <span className="hover:text-white cursor-pointer transition-colors">LINKEDIN</span>
+           <span className={`hover:text-white transition-colors ${buttonClass}`}>INSTAGRAM</span>
+           <span className={`hover:text-white transition-colors ${buttonClass}`}>TWITTER</span>
+           <span className={`hover:text-white transition-colors ${buttonClass}`}>LINKEDIN</span>
         </div>
       </div>
 

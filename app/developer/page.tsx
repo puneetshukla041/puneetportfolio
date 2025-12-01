@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '@/components/Header';
 import Section1 from '@/components/developer/section1';
 import Section2 from '@/components/developer/section2';
-import Section3 from '@/components/developer/section3';
+
 const Page = () => {
   return (
     <main className="relative bg-neutral-950 min-h-screen">
@@ -18,7 +18,7 @@ const Page = () => {
       <div id="section-2">
         <Section2 />
       </div>
-        <Section3 />
+      
       {/* Placeholder IDs for future sections to prevent errors if clicked
           (You can replace these divs with the actual components later) */}
       <div id="section-3" /> {/* Projects */}
