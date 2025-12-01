@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Volume2, VolumeX, Sunrise, Wind } from 'lucide-react';
 
-const SectionBombay = () => {
+const SectionDreams = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [showIntro, setShowIntro] = useState(false);
@@ -119,7 +119,7 @@ const SectionBombay = () => {
 
   return (
     <section
-      id="section-bombay"
+      id="section-dreams"
       ref={sectionRef}
       // LAYOUT: Mobile = Col, Desktop = Row Reverse (Text Left, Video Right)
       className="relative w-full min-h-screen bg-black overflow-hidden flex flex-col md:flex-row-reverse"
@@ -157,22 +157,25 @@ const SectionBombay = () => {
       <div className="w-full md:flex-1 bg-black flex items-center justify-center relative border-b md:border-b-0 md:border-l border-white/10">
         
         {/* THE 16:9 CONTAINER */}
-        {/* The aspect-video class ensures the 16:9 ratio for the container */}
         <div className="relative w-full aspect-video group bg-neutral-900 overflow-hidden shadow-2xl">
             
             <video
               ref={videoRef}
-              // UPDATE: To rotate a video and make it fill a 16:9 container correctly using object-cover,
-              // we use absolute centering along with the rotation transform.
-              style={{ transform: 'translate(-50%, -50%) rotate(-90deg)' }}
-              // UPDATE: We use min-w/h-full and center positioning to ensure the rotated video covers the container area.
-              className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto object-cover transform-gpu"
+              // FIX: 
+              // 1. translate(-50%, -50%) centers it.
+              // 2. rotate(-90deg) flips the 9:16 video to be horizontal.
+              // 3. scale(1.778) expands it because object-contain made it small to fit the height. 
+              //    16/9 is approx 1.7777. This makes it fill the container perfectly.
+              style={{ transform: 'translate(-50%, -50%) rotate(-90deg) scale(1.778)' }}
+              
+              // Use object-contain so we get the FULL video frame (no cropping)
+              className="absolute top-1/2 left-1/2 w-full h-full object-contain transform-gpu"
+              
               loop
               playsInline
               preload="auto"
               onCanPlayThrough={handleVideoLoad}
             >
-              {/* Updated Path */}
               <source src="/videos/herosix.mp4" type="video/mp4" />
             </video>
 
@@ -294,4 +297,4 @@ const SectionBombay = () => {
   );
 };
 
-export default SectionBombay;
+export default SectionDreams;
