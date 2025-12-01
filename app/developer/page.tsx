@@ -9,6 +9,7 @@ const Page = () => {
       <Header />
 
       {/* Home Section -> Maps to Header "Home" */}
+      
       <div id="section-1">
         <Section1 />
       </div>
