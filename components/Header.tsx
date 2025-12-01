@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, SVGMotionProps, Variants } from 'framer-motion';
-import { Instagram, Linkedin, Github, ChevronRight, Code2, Palette } from 'lucide-react';
+import { Instagram, Linkedin, Github, ChevronRight, Code2, Palette, ArrowRight } from 'lucide-react';
 
 interface MenuItem {
   title: string;
   href: string;
-  isButton?: boolean; // Added optional property for styling "Hire Me" differently if needed
+  isButton?: boolean;
 }
 
 // Custom Hamburger Icon Component
@@ -38,7 +38,7 @@ const Header = () => {
   const [isSwitching, setIsSwitching] = useState(false);
   
   // Visibility State
-  const [isVisible, setIsVisible] = useState(true); // Default to true, adjust in scroll logic
+  const [isVisible, setIsVisible] = useState(true);
 
   // Toggle Logic
   const handleToggle = () => {
@@ -55,7 +55,7 @@ const Header = () => {
     }, 400); 
   };
 
-  // --- UPDATED MENU DATA ---
+  // --- MENU DATA ---
   const developerMenuItems: MenuItem[] = [
     { title: 'Home', href: '#section-1' },
     { title: 'Experience', href: '#section-2' },
@@ -73,11 +73,9 @@ const Header = () => {
 
   const currentMenuItems = isDeveloperMode ? developerMenuItems : contentMenuItems;
 
-  // --- UPDATED SCROLLSPY LOGIC ---
+  // --- SCROLLSPY LOGIC ---
   useEffect(() => {
-    // Define which sections to track based on the current mode
     let sections = [];
-
     if (isDeveloperMode) {
       sections = [
         { id: 'section-1', name: 'Home' },
@@ -97,13 +95,11 @@ const Header = () => {
 
     const handleScrollSpy = () => {
       const scrollPosition = window.scrollY + 150;
-      
       for (const section of sections) {
         const element = document.getElementById(section.id);
         if (element) {
           const offsetTop = element.offsetTop;
           const offsetBottom = offsetTop + element.offsetHeight;
-          
           if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
             setActiveSection(section.name);
             break;
@@ -113,9 +109,9 @@ const Header = () => {
     };
 
     window.addEventListener('scroll', handleScrollSpy);
-    handleScrollSpy(); // Initial check
+    handleScrollSpy(); 
     return () => window.removeEventListener('scroll', handleScrollSpy);
-  }, [pathname, isDeveloperMode]); // Re-run when mode changes
+  }, [pathname, isDeveloperMode]);
 
   // Smooth Scroll Handler
   const handleLinkClick = (e: React.MouseEvent, item: MenuItem) => {
@@ -124,7 +120,6 @@ const Header = () => {
       const element = document.getElementById(item.href.substring(1));
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
-        // Manually set active section immediately for better UX
         setActiveSection(item.title);
       }
     }
@@ -136,11 +131,9 @@ const Header = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setSticky(currentScrollY > 20);
-
-      // Optional: Logic to hide header on Dev hero section if desired
       if (isDeveloperMode) {
         const threshold = window.innerHeight / 2;
-        setIsVisible(currentScrollY > threshold || currentScrollY < 50); // Show at very top or after scroll
+        setIsVisible(currentScrollY > threshold || currentScrollY < 50);
       } else {
         setIsVisible(true);
       }
@@ -151,9 +144,7 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isDeveloperMode]);
 
-  const isItemActive = (item: MenuItem) => {
-    return activeSection === item.title;
-  };
+  const isItemActive = (item: MenuItem) => activeSection === item.title;
 
   // --- Animation Variants ---
   const mobileMenuVariants: Variants = {
@@ -164,6 +155,16 @@ const Header = () => {
   const mobileItemVariants: Variants = {
     closed: { x: -20, opacity: 0 },
     open: { x: 0, opacity: 1 }
+  };
+
+  // Reusable bouncing arrow animation
+  const bounceTransition = {
+    x: {
+      duration: 0.8,
+      repeat: Infinity,
+      repeatType: "reverse",
+      ease: "easeInOut"
+    }
   };
 
   return (
@@ -229,15 +230,22 @@ const Header = () => {
               
               <div className="flex flex-col items-end mr-1 overflow-hidden h-5">
                 <AnimatePresence mode="wait">
-                  <motion.span 
+                  <motion.div 
                     key={isDeveloperMode ? "dev" : "content"}
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -20, opacity: 0 }}
-                    className="text-xs font-semibold tracking-wide text-white/80"
+                    className="flex items-center gap-2 text-xs font-semibold tracking-wide text-white/80"
                   >
-                    {isDeveloperMode ? "Switch to Content" : "Switch to Dev"}
-                  </motion.span>
+                     {/* Desktop Arrow Animation */}
+                    <span>{isDeveloperMode ? "Switch to Content" : "Switch to Dev"}</span>
+                    <motion.span
+                        animate={{ x: [0, 4, 0] }}
+                        transition={bounceTransition as any}
+                    >
+                         <ArrowRight size={12} className="text-blue-400" />
+                    </motion.span>
+                  </motion.div>
                 </AnimatePresence>
               </div>
               
@@ -383,17 +391,28 @@ const Header = () => {
                           {isDeveloperMode ? <Palette size={20} /> : <Code2 size={20} />}
                       </div>
                       <span className="text-sm font-medium text-white/90">
-                          {isDeveloperMode ? "Switch to Content Mode" : "Switch to Developer Mode"}
+                          {isDeveloperMode ? "Switch to Content" : "Switch to Dev"}
                       </span>
                     </div>
                     
-                    {/* Animated Mobile Knob */}
-                    <div className={`w-14 h-7 rounded-full p-1 transition-colors duration-300 ${isSwitching ? 'bg-blue-600' : 'bg-white/20'}`}>
-                      <motion.div 
-                        className="w-5 h-5 bg-white rounded-full shadow-md"
-                        animate={{ x: isSwitching ? 28 : 0 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                      />
+                    <div className="flex items-center gap-3">
+                        {/* Mobile Arrow Animation (Side of Toggle) */}
+                        <motion.div
+                            animate={{ x: [0, 5, 0] }}
+                            transition={bounceTransition as any}
+                            className="text-blue-400"
+                        >
+                            <ArrowRight size={16} />
+                        </motion.div>
+
+                        {/* Animated Mobile Knob */}
+                        <div className={`w-14 h-7 rounded-full p-1 transition-colors duration-300 ${isSwitching ? 'bg-blue-600' : 'bg-white/20'}`}>
+                        <motion.div 
+                            className="w-5 h-5 bg-white rounded-full shadow-md"
+                            animate={{ x: isSwitching ? 28 : 0 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                        />
+                        </div>
                     </div>
                   </button>
                 </motion.div>
