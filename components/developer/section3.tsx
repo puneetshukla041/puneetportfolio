@@ -122,7 +122,7 @@ const customStyles = `
   .hud-card:hover::after {
     opacity: 1;
   }
-   
+    
   .hud-card:hover .icon-glow {
     color: #fff;
     filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
@@ -188,81 +188,77 @@ const customStyles = `
   }
 `;
 
-// --- Data (Simplified, no stats) ---
+// --- Data (Updated with Problem vs Solution Format) ---
 const FEATURE_DATA: FeatureItem[] = [
   {
     title: "Certificate Generator",
     points: [
-      "Generates certificates using 4 pre-made templates.",
-      "Sends emails directly to doctors (via SMTP), no Gmail needed.",
-      "Instantly exports data to Excel and PDF formats.",
-      "Includes a dashboard to track all training data in one place."
+      "Problem: Slow manual design → Solution: Generates instantly using 4 dynamic templates.",
+      "Problem: Personal email limits → Solution: Sends direct SMTP emails (No Gmail limits).",
+      "Problem: Scattered records → Solution: Dashboard centralizes data with Excel/PDF export."
     ],
     icon: <FileText size={20} />
   },
   {
     title: "Poster Editor",
     points: [
-      "Drag & drop multiple logos easily.",
-      "Automatically adjusts size, height, and position of logos.",
-      "Exports high-quality 300 DPI images for printing.",
-      "Automatically saves all designs to the cloud (AWS S3)."
+      "Problem: Tedious alignment → Solution: Auto-layout scales & positions logos instantly.",
+      "Problem: Poor print quality → Solution: Cloud rendering exports 300 DPI high-res files.",
+      "Problem: Local file loss → Solution: Every design is auto-saved to AWS S3 storage."
     ],
     icon: <ImageIcon size={20} />
   },
   {
     title: "Background Remover",
     points: [
-      "Instantly removes the background from any photo.",
-      "Works automatically—no manual editing required.",
-      "Prepares photos perfectly for ID cards and posters.",
+      "Problem: Hours in Photoshop → Solution: AI removes backgrounds in milliseconds.",
+      "Problem: Inconsistent photos → Solution: Standardizes all employee headshots automatically.",
+      "Result: Ready-to-use assets for ID cards without manual editing."
     ],
     icon: <Zap size={20} />
   },
   {
     title: "ID Card Maker",
     points: [
-      "Upload a photo -> Background removed -> Centered automatically.",
-      "Fills in employee details from the database.",
-      "Generates a final ID card ready for print.",
-      "Saves the final card directly to AWS storage."
+      "Problem: Data entry errors → Solution: Fetches verified employee details from DB.",
+      "Problem: Complex formatting → Solution: Auto-centers photo and generates print-ready cards.",
+      "Result: 100% accurate, standardized company ID cards."
     ],
     icon: <CreditCard size={20} />
   },
   {
     title: "Visiting Card Manager",
     points: [
-      "Save doctor details (Name, Hospital, Email) securely.",
-      "Generate cards in both Light and Dark themes instantly.",
-      "Export as print-ready PDFs.",
-      "All files are backed up to the cloud."
+      "Problem: Brand fragmentation → Solution: Enforces consistent Light/Dark themes.",
+      "Problem: Lost contacts → Solution: Secure cloud storage for all hospital doctor data.",
+      "Result: Professional, brand-compliant cards generated instantly."
     ],
     icon: <Users size={20} />
   },
   {
     title: "Report a Bug",
     points: [
-      "Found an issue? Report it directly here.",
-      "Sends feedback straight to the developer team.",
-      "Helps fix software problems faster."
+      "Problem: Unreported issues → Solution: Direct in-app feedback pipeline.",
+      "Problem: Slow fixes → Solution: real-time alerts sent to the developer team.",
+      "Result: Faster iterations and higher software stability."
     ],
     icon: <Bug size={20} />
   },
   {
     title: "Theme Manager",
     points: [
-      "Switch the look of the app instantly.",
-      "Change colors and styles with one click.",
-      "Ensures the app is easy to read for everyone."
+      "Problem: Eye strain → Solution: One-click toggle between High Contrast modes.",
+      "Problem: Usability → Solution: Ensures readability for all environments.",
+      "Result: An inclusive, accessible user interface."
     ],
     icon: <Palette size={20} />
   },
   {
     title: "User Profile",
     points: [
-      "Manage your login details and password.",
-      "Control who can access different parts of the app.",
-      "Keeps your session secure and private."
+      "Problem: Unauthorized access → Solution: Role-Based Access Control (RBAC).",
+      "Problem: Security risks → Solution: Encrypted session management.",
+      "Result: Enterprise-grade security for sensitive modules."
     ],
     icon: <Lock size={20} />
   }
@@ -356,7 +352,7 @@ const CredentialBox = () => {
   );
 };
 
-export default function ProjectShowcase() {
+export default function Section2() {
   
   return (
     <div className="min-h-screen font-sans antialiased overflow-hidden selection:bg-cyan-500/30 selection:text-white pb-32">
@@ -378,11 +374,9 @@ export default function ProjectShowcase() {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
-              <span className="text-[10px] font-mono text-green-500 uppercase tracking-widest">System Online</span>
+             
             </div>
-            <h1 className="text-[10px] font-mono text-white/40 uppercase tracking-[0.4em] mb-2">
-              Portfolio_SEC_03 // Enterprise_V1
-            </h1>
+         
             <h2 className="text-4xl font-bold tracking-tighter text-white title-cinematic">
               SELECTED WORKS
             </h2>
@@ -514,11 +508,28 @@ export default function ProjectShowcase() {
                 <h4 className="text-white font-bold text-xl mb-3 tracking-wide group-hover:text-cyan-400 transition-colors">{feature.title}</h4>
                 
                 {/* Updated List Rendering */}
-                <ul className="space-y-2 mt-4">
+                <ul className="space-y-3 mt-4">
                   {feature.points.map((point, pIdx) => (
                     <li key={pIdx} className="flex items-start text-white/50 text-xs font-mono leading-relaxed">
-                      <span className="text-cyan-400 mr-2">➜</span>
-                      {point}
+                      <span className="text-cyan-400 mr-2 shrink-0">➜</span>
+                      <span>
+                        {point.split('Solution:').map((part, i) => (
+                           <React.Fragment key={i}>
+                             {i === 0 ? (
+                               part.includes('Problem:') ? (
+                                 <>
+                                   <span className="text-red-400/80">Problem:</span> {part.replace('Problem:', '').replace('→', '')}
+                                   {point.includes('Solution:') && <br/>}
+                                 </>
+                               ) : part
+                             ) : (
+                               <>
+                                 <span className="text-emerald-400/80">Solution:</span> {part}
+                               </>
+                             )}
+                           </React.Fragment>
+                        ))}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -614,14 +625,6 @@ export default function ProjectShowcase() {
 
         </main>
 
-        {/* --- FOOTER --- */}
-        <footer className="border-t border-white/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-6 text-white/20 text-[10px] font-mono uppercase tracking-widest">
-          <p>© 2025 SS Innovations International. All Rights Reserved.</p>
-          <div className="flex gap-12">
-            <span className="hover:text-cyan-400 cursor-pointer transition-colors">Documentation</span>
-            <span className="hover:text-red-500 cursor-pointer transition-colors">Terminate Session</span>
-          </div>
-        </footer>
 
       </div>
     </div>
