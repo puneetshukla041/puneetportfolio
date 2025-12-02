@@ -8,16 +8,19 @@ import {
   CreditCard, 
   ImageIcon, 
   Users, 
-  Shield, 
   Smartphone, 
   Code, 
   Zap,
   Lock,
   Download,
   FileText,
-  Globe,
   Terminal,
-  Cpu
+  Cpu,
+  Linkedin,
+  Server,
+  Cloud,
+  Palette,
+  Bug
 } from 'lucide-react';
 
 // --- Types ---
@@ -28,9 +31,8 @@ interface SectionHeaderProps {
 
 interface FeatureItem {
   title: string;
-  desc: string;
+  points: string[];
   icon: React.ReactNode;
-  stat: string;
 }
 
 interface NativeFeature {
@@ -120,7 +122,7 @@ const customStyles = `
   .hud-card:hover::after {
     opacity: 1;
   }
-  
+   
   .hud-card:hover .icon-glow {
     color: #fff;
     filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
@@ -186,43 +188,83 @@ const customStyles = `
   }
 `;
 
-// --- Data ---
+// --- Data (Simplified, no stats) ---
 const FEATURE_DATA: FeatureItem[] = [
   {
-    title: "Certificate Engine",
-    desc: "Automates PDF generation via 3 pre-built templates. Includes analytics dashboard.",
-    icon: <FileText size={20} />,
-    stat: "PDF-LIB"
+    title: "Certificate Generator",
+    points: [
+      "Generates certificates using 4 pre-made templates.",
+      "Sends emails directly to doctors (via SMTP), no Gmail needed.",
+      "Instantly exports data to Excel and PDF formats.",
+      "Includes a dashboard to track all training data in one place."
+    ],
+    icon: <FileText size={20} />
   },
   {
-    title: "Identity Hub",
-    desc: "Decoupled design system. Instant switching between Light/Dark themes for visiting cards.",
-    icon: <Users size={20} />,
-    stat: "THEMING"
+    title: "Poster Editor",
+    points: [
+      "Drag & drop multiple logos easily.",
+      "Automatically adjusts size, height, and position of logos.",
+      "Exports high-quality 300 DPI images for printing.",
+      "Automatically saves all designs to the cloud (AWS S3)."
+    ],
+    icon: <ImageIcon size={20} />
   },
   {
-    title: "Smart Layouts",
-    desc: "Adaptive algorithms for promotional posters. Auto-centers assets via Canvas API.",
-    icon: <ImageIcon size={20} />,
-    stat: "CANVAS"
+    title: "Background Remover",
+    points: [
+      "Instantly removes the background from any photo.",
+      "Works automatically—no manual editing required.",
+      "Prepares photos perfectly for ID cards and posters.",
+    ],
+    icon: <Zap size={20} />
   },
   {
-    title: "ID Card System",
-    desc: "Real-time DOM rendering. Merges employee data into print-ready visuals instantly.",
-    icon: <CreditCard size={20} />,
-    stat: "LIVE DOM"
+    title: "ID Card Maker",
+    points: [
+      "Upload a photo -> Background removed -> Centered automatically.",
+      "Fills in employee details from the database.",
+      "Generates a final ID card ready for print.",
+      "Saves the final card directly to AWS storage."
+    ],
+    icon: <CreditCard size={20} />
   },
   {
-    title: "Secure Encrypted",
-    desc: "E2E encrypted reporting channel. Auto-tags IDs for rapid security triage.",
-    icon: <Shield size={20} />,
-    stat: "AES-256"
+    title: "Visiting Card Manager",
+    points: [
+      "Save doctor details (Name, Hospital, Email) securely.",
+      "Generate cards in both Light and Dark themes instantly.",
+      "Export as print-ready PDFs.",
+      "All files are backed up to the cloud."
+    ],
+    icon: <Users size={20} />
   },
   {
-    title: "Command Center",
-    desc: "User profile management with 2FA, session monitoring, and i18n support.",
-    icon: <Lock size={20} />,
-    stat: "AUTH V5"
+    title: "Report a Bug",
+    points: [
+      "Found an issue? Report it directly here.",
+      "Sends feedback straight to the developer team.",
+      "Helps fix software problems faster."
+    ],
+    icon: <Bug size={20} />
+  },
+  {
+    title: "Theme Manager",
+    points: [
+      "Switch the look of the app instantly.",
+      "Change colors and styles with one click.",
+      "Ensures the app is easy to read for everyone."
+    ],
+    icon: <Palette size={20} />
+  },
+  {
+    title: "User Profile",
+    points: [
+      "Manage your login details and password.",
+      "Control who can access different parts of the app.",
+      "Keeps your session secure and private."
+    ],
+    icon: <Lock size={20} />
   }
 ];
 
@@ -236,8 +278,17 @@ const NATIVE_APPS = {
   ] as NativeFeature[]
 };
 
-const TECH_STACK: string[] = [
-  "Next.js 14", "Tailwind", "MongoDB", "Node.js", "Electron", "Capacitor", "NextAuth", "Framer Motion"
+// MNC-Ready Tech Stack
+const TECH_STACK_CORE = [
+  "Next.js 14", "TypeScript", "React", "Tailwind CSS"
+];
+
+const TECH_STACK_INFRA = [
+  "AWS S3", "AWS SES", "Docker", "MongoDB", "Redis"
+];
+
+const TECH_STACK_OPS = [
+  "CI/CD", "Jest Testing", "Electron", "Git/GitHub"
 ];
 
 // --- Components ---
@@ -306,7 +357,6 @@ const CredentialBox = () => {
 };
 
 export default function ProjectShowcase() {
-  // Mouse position tracking for hover effects could go here, relying on CSS :hover for now for simplicity/performance
   
   return (
     <div className="min-h-screen font-sans antialiased overflow-hidden selection:bg-cyan-500/30 selection:text-white pb-32">
@@ -317,8 +367,8 @@ export default function ProjectShowcase() {
       <div className="scanlines"></div>
       
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-         <div className="nebula-glow top-[-10%] right-[-10%] bg-blue-500/10"></div>
-         <div className="nebula-glow bottom-[-10%] left-[-10%] bg-purple-500/10" style={{ animationDelay: '-10s' }}></div>
+          <div className="nebula-glow top-[-10%] right-[-10%] bg-blue-500/10"></div>
+          <div className="nebula-glow bottom-[-10%] left-[-10%] bg-purple-500/10" style={{ animationDelay: '-10s' }}></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-24">
@@ -331,7 +381,7 @@ export default function ProjectShowcase() {
               <span className="text-[10px] font-mono text-green-500 uppercase tracking-widest">System Online</span>
             </div>
             <h1 className="text-[10px] font-mono text-white/40 uppercase tracking-[0.4em] mb-2">
-              Portfolio_SEC_03 // Project_01
+              Portfolio_SEC_03 // Enterprise_V1
             </h1>
             <h2 className="text-4xl font-bold tracking-tighter text-white title-cinematic">
               SELECTED WORKS
@@ -356,7 +406,7 @@ export default function ProjectShowcase() {
 
               <div className="text-xl md:text-2xl text-white/70 font-light leading-relaxed max-w-2xl">
                 Enterprise automated design ecosystem. <br/>
-                Replacing manual workflows with intelligent, <span className="text-cyan-400 font-medium drop-shadow-lg">database-driven automation.</span>
+                Replacing manual workflows with intelligent, <span className="text-cyan-400 font-medium drop-shadow-lg">Cloud-Native Automation.</span>
               </div>
 
               <CredentialBox />
@@ -370,65 +420,85 @@ export default function ProjectShowcase() {
                   </div>
                   
                   <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-                    <h4 className="text-xs font-mono text-cyan-400 uppercase tracking-[0.2em] drop-shadow-[0_0_5px_rgba(0,243,255,0.5)]">Mission Report</h4>
+                    <h4 className="text-xs font-mono text-cyan-400 uppercase tracking-[0.2em] drop-shadow-[0_0_5px_rgba(0,243,255,0.5)]">Project Details</h4>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-y-8 gap-x-4">
-                     <div className="col-span-2">
+                      <div className="col-span-2">
                       <p className="text-[9px] uppercase text-white/40 mb-2 tracking-widest">Affiliation</p>
                       <p className="text-white font-bold text-lg tracking-wide">
                         SS Innovations International
                       </p>
-                      <p className="text-xs text-white/50 mt-1 font-mono">Role: Software Engineer</p>
+                      <p className="text-xs text-white/50 mt-1 font-mono">Role: Software Engineer (Full Stack)</p>
                     </div>
                     
                     <div>
                       <p className="text-[9px] uppercase text-white/40 mb-2 tracking-widest">Lead Engineer</p>
-                      <p className="text-white font-medium text-sm">Puneet Shukla</p>
+                      <div className="flex items-center gap-3">
+                        <p className="text-white font-medium text-sm">Puneet Shukla</p>
+                        <a 
+                          href="https://www.linkedin.com/in/puneet-shukla-72b915225/" 
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="text-[#0077b5] hover:text-white transition-colors p-1 hover:bg-[#0077b5] rounded"
+                        >
+                          <Linkedin size={14} />
+                        </a>
+                      </div>
                     </div>
 
                     <div>
-                       <p className="text-[9px] uppercase text-white/40 mb-2 tracking-widest">Supervision</p>
-                       <p className="text-white font-medium text-sm">Naveen A. Kumar</p>
+                        <p className="text-[9px] uppercase text-white/40 mb-2 tracking-widest">Mentorship</p>
+                        <div className="flex items-center gap-3">
+                            <p className="text-white font-medium text-sm">Naveen A. Kumar</p>
+                            <a 
+                              href="https://www.linkedin.com/in/naveen-ajay-kumar-s-99184770/" 
+                              target="_blank" 
+                              rel="noreferrer"
+                              className="text-[#0077b5] hover:text-white transition-colors p-1 hover:bg-[#0077b5] rounded"
+                            >
+                                <Linkedin size={14} />
+                            </a>
+                        </div>
                     </div>
 
                     <div className="col-span-2 pt-6 border-t border-white/5">
-                       <p className="text-[9px] uppercase text-white/40 mb-4 tracking-widest">Core Architecture</p>
-                       <div className="flex flex-wrap gap-2">
-                         <span className="tech-pill px-4 py-1.5 text-[10px] text-white/90 border border-white/10 bg-white/5 uppercase tracking-wider">MERN Stack</span>
-                         <span className="tech-pill px-4 py-1.5 text-[10px] text-white/90 border border-white/10 bg-white/5 uppercase tracking-wider">Electron</span>
-                         <span className="tech-pill px-4 py-1.5 text-[10px] text-white/90 border border-white/10 bg-white/5 uppercase tracking-wider">Next.js 14</span>
-                       </div>
+                        <p className="text-[9px] uppercase text-white/40 mb-4 tracking-widest">Core Tech</p>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="tech-pill px-4 py-1.5 text-[10px] text-white/90 border border-white/10 bg-white/5 uppercase tracking-wider">AWS Cloud</span>
+                          <span className="tech-pill px-4 py-1.5 text-[10px] text-white/90 border border-white/10 bg-white/5 uppercase tracking-wider">MERN Stack</span>
+                          <span className="tech-pill px-4 py-1.5 text-[10px] text-white/90 border border-white/10 bg-white/5 uppercase tracking-wider">Microservices</span>
+                        </div>
                     </div>
                   </div>
                </div>
             </div>
           </div>
 
-          {/* --- CHALLENGE / SOLUTION --- */}
+          {/* --- CHALLENGE / SOLUTION (Simplified) --- */}
           <div className="grid md:grid-cols-2 gap-16 mb-40">
             <div className="hud-card p-10 border-l-4 border-l-red-500/50">
               <h3 className="text-white font-bold text-2xl mb-6 tracking-wide flex items-center gap-3">
-                <span className="text-red-500 text-xs font-mono uppercase tracking-widest border border-red-500/30 px-2 py-1 bg-red-500/10">[CRITICAL ERROR]</span>
-                The Challenge
+                <span className="text-red-500 text-xs font-mono uppercase tracking-widest border border-red-500/30 px-2 py-1 bg-red-500/10">[THE PROBLEM]</span>
+                Manual Work
               </h3>
               <p className="text-white/60 leading-loose text-base">
-                Designers faced burnout manually editing hundreds of files. Data was fragmented between Excel and Photoshop, causing version conflicts and high turnaround times for simple tasks.
+                Designers were tired of manually editing hundreds of files. Data was scattered across Excel and Photoshop, causing mistakes, version conflicts, and very long delays in getting work done.
               </p>
             </div>
             <div className="hud-card p-10 border-l-4 border-l-emerald-500/50">
               <h3 className="text-white font-bold text-2xl mb-6 tracking-wide flex items-center gap-3">
-                <span className="text-emerald-500 text-xs font-mono uppercase tracking-widest border border-emerald-500/30 px-2 py-1 bg-emerald-500/10">[SYSTEM PATCH]</span>
-                The Solution
+                <span className="text-emerald-500 text-xs font-mono uppercase tracking-widest border border-emerald-500/30 px-2 py-1 bg-emerald-500/10">[THE SOLUTION]</span>
+                Automation
               </h3>
               <p className="text-white/60 leading-loose text-base">
-                We engineered a unified ecosystem. By centralizing data into MongoDB (Single Source of Truth) and building automated render engines, we reduced multi-day workloads to mere seconds.
+                We built one central system. Now, data is safely stored in <span className="text-white">MongoDB</span> and images are created automatically using <span className="text-white">AWS</span>. Jobs that used to take days now take just a few seconds.
               </p>
             </div>
           </div>
 
           {/* --- MODULES GRID --- */}
-          <SectionHeader number="01" title="System Modules" />
+          <SectionHeader number="01" title="System Features" />
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-32">
             {FEATURE_DATA.map((feature, idx) => (
@@ -440,14 +510,19 @@ export default function ProjectShowcase() {
                   <div className="text-white/40 icon-glow transition-all duration-300">
                     {feature.icon}
                   </div>
-                  <span className="text-[9px] font-mono text-white/30 border border-white/10 px-2 py-0.5 bg-black/50">
-                    {feature.stat}
-                  </span>
                 </div>
                 <h4 className="text-white font-bold text-xl mb-3 tracking-wide group-hover:text-cyan-400 transition-colors">{feature.title}</h4>
-                <p className="text-white/50 text-xs leading-relaxed font-mono">
-                  {feature.desc}
-                </p>
+                
+                {/* Updated List Rendering */}
+                <ul className="space-y-2 mt-4">
+                  {feature.points.map((point, pIdx) => (
+                    <li key={pIdx} className="flex items-start text-white/50 text-xs font-mono leading-relaxed">
+                      <span className="text-cyan-400 mr-2">➜</span>
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+
               </div>
             ))}
           </div>
@@ -491,15 +566,49 @@ export default function ProjectShowcase() {
           </div>
 
           {/* --- ARCHITECTURE --- */}
-          <SectionHeader number="03" title="Tech Stack" />
+          <SectionHeader number="03" title="Enterprise Tech Stack" />
           
-          <div className="mb-24 pb-20">
-            <div className="flex flex-wrap gap-3">
-              {TECH_STACK.map((tech, idx) => (
-                <span key={idx} className="tech-pill px-8 py-4 text-xs text-white/60 uppercase tracking-widest border border-white/5 bg-white/[0.02]">
-                  {tech}
-                </span>
-              ))}
+          <div className="mb-24 pb-20 space-y-8">
+            {/* Front End & Core */}
+            <div>
+              <p className="text-[10px] uppercase text-white/40 mb-3 tracking-widest flex items-center gap-2">
+                <Code size={12}/> Frontend & Core
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {TECH_STACK_CORE.map((tech, idx) => (
+                  <span key={idx} className="tech-pill px-8 py-4 text-xs text-white/80 font-bold uppercase tracking-widest border border-white/10 bg-white/[0.02]">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Cloud & Backend */}
+            <div>
+              <p className="text-[10px] uppercase text-white/40 mb-3 tracking-widest flex items-center gap-2">
+                <Cloud size={12}/> Cloud Infrastructure (AWS)
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {TECH_STACK_INFRA.map((tech, idx) => (
+                  <span key={idx} className="tech-pill px-8 py-4 text-xs text-cyan-400/80 font-bold uppercase tracking-widest border border-cyan-500/20 bg-cyan-500/[0.05]">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+             {/* DevOps */}
+             <div>
+              <p className="text-[10px] uppercase text-white/40 mb-3 tracking-widest flex items-center gap-2">
+                <Server size={12}/> DevOps & Security
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {TECH_STACK_OPS.map((tech, idx) => (
+                  <span key={idx} className="tech-pill px-8 py-4 text-xs text-white/60 uppercase tracking-widest border border-white/5 bg-white/[0.02]">
+                    {tech}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -507,10 +616,10 @@ export default function ProjectShowcase() {
 
         {/* --- FOOTER --- */}
         <footer className="border-t border-white/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-6 text-white/20 text-[10px] font-mono uppercase tracking-widest">
-          <p>© 2025 SS Innovations International.</p>
+          <p>© 2025 SS Innovations International. All Rights Reserved.</p>
           <div className="flex gap-12">
-            <span className="hover:text-cyan-400 cursor-pointer transition-colors">Section 03</span>
-            <span className="hover:text-red-500 cursor-pointer transition-colors">End of Line</span>
+            <span className="hover:text-cyan-400 cursor-pointer transition-colors">Documentation</span>
+            <span className="hover:text-red-500 cursor-pointer transition-colors">Terminate Session</span>
           </div>
         </footer>
 
