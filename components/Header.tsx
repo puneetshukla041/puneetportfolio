@@ -11,7 +11,7 @@ import {
   useMotionValueEvent,
   SVGMotionProps, 
   Variants,
-  Transition // <--- Added this import
+  Transition 
 } from 'framer-motion';
 import { 
   Instagram, 
@@ -33,7 +33,6 @@ interface MenuItem {
 }
 
 // --- ANIMATION CONFIG ---
-// We explicitely type these as Transition to fix the build error
 const transitionSpring: Transition = {
   type: "spring",
   stiffness: 300,
@@ -89,9 +88,9 @@ const Header = () => {
   const developerMenuItems: MenuItem[] = [
     { title: 'Home', href: '#section-1' },
     { title: 'Experience', href: '#section-2' },
-    { title: 'Projects', href: '#section-3' },
-    { title: 'Skills', href: '#section-4' },
-    { title: 'Hire Me', href: '#section-5', isButton: true },
+    { title: 'Skills', href: '#section-3' },
+    { title: 'Projects', href: '#section-4' },
+    { title: 'Hire Me', href: '#section-6', isButton: true },
   ];
 
   const contentMenuItems: MenuItem[] = [
@@ -110,9 +109,10 @@ const Header = () => {
         return [
           { id: 'section-1', name: 'Home' },
           { id: 'section-2', name: 'Experience' },
-          { id: 'section-3', name: 'Projects' },
-          { id: 'section-4', name: 'Skills' },
-          { id: 'section-5', name: 'Hire Me' }
+          { id: 'section-3', name: 'Skills' },
+          { id: 'section-4', name: 'Projects' },
+          { id: 'section-5', name: 'Projects' }, // Catch scroll in section 5 for Projects
+          { id: 'section-6', name: 'Hire Me' }
         ];
       }
       return [
