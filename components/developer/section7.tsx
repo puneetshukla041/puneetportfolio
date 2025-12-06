@@ -116,7 +116,7 @@ const SocialPill = ({ icon: Icon, label, href }: { icon: any, label: string, hre
 export default function HireMeSection() {
   const [copied, setCopied] = useState(false);
   const currentTime = useTime();
-  const email = "puneet.shukla@example.com"; 
+  const email = "puneetshukla041@gmail.com"; 
 
   const handleCopy = () => {
     navigator.clipboard.writeText(email);
@@ -135,7 +135,6 @@ export default function HireMeSection() {
           <div className="flex items-center gap-3 mb-2">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            
             </span>
         
           </div>
