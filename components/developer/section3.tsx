@@ -362,17 +362,10 @@ const SkillCard = ({ skill }: { skill: Skill }) => {
                 ))}
               </div>
               
-              {/* Name Display: Only if single company, otherwise visually rely on logos + tooltip */}
-              {skill.companies.length === 1 && (
-                <span className="text-[10px] text-zinc-400 font-medium truncate max-w-[80px]">
-                  {skill.companies[0].name}
-                </span>
-              )}
-              {skill.companies.length > 1 && (
-                <span className="text-[10px] text-zinc-500 font-medium">
-                  Multiple
-                </span>
-              )}
+              {/* Name Display: List all names comma separated */}
+              <span className="text-[10px] text-zinc-400 font-medium truncate max-w-[80px] md:max-w-[100px]" title={skill.companies.map(c => c.name).join(', ')}>
+                {skill.companies.map(c => c.name).join(', ')}
+              </span>
             </div>
           ) : (
             // Placeholder for self-taught/other
