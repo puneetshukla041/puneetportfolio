@@ -8,7 +8,7 @@ import {
   CreditCard, 
   ShieldCheck, 
   Smartphone, 
-  Monitor, 
+  // Monitor removed (unused)
   Download, 
   Terminal, 
   ArrowRight,
@@ -167,7 +167,8 @@ const SectionHeader = ({ sub, title }: { sub: string, title: string }) => {
 };
 
 // 3. Apple-style Cyber Button
-const InteractiveButton = ({ children, icon: Icon }: { children: React.ReactNode, icon: any }) => {
+// FIX: Replaced 'any' with 'React.ElementType'
+const InteractiveButton = ({ children, icon: Icon }: { children: React.ReactNode, icon: React.ElementType }) => {
   return (
     <button className="group relative w-full px-6 py-4 text-xs font-bold uppercase tracking-widest flex items-center justify-between overflow-hidden bg-white/5 border border-white/10 text-white transition-all hover:bg-white/10 hover:border-white/30 hover:scale-[1.01] active:scale-[0.99] cursor-pointer rounded-lg">
       <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-700 ease-in-out group-hover:left-full z-0" />
@@ -209,35 +210,36 @@ export default function CaseStudySection() {
              style={{ y: ySlow, opacity: opacityFade }}
              className="border-l-2 border-white/10 pl-4 md:pl-6"
            >
-              <h2 className="text-[10px] md:text-xs lg:text-sm font-mono text-zinc-500 mb-2 tracking-widest uppercase">
-                Case Study
-              </h2>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[0.9] tracking-tight mb-4 md:mb-6">
-                SSI<span className="text-zinc-600">STUDIOS</span>
-              </h1>
-              <p className="text-sm md:text-base lg:text-lg text-zinc-400 font-light leading-relaxed max-w-xl">
-                A custom workflow solution bridging the gap between data management and graphic design. 
-                By automating "busy work," we empower the <span className="text-white font-medium">SSimaya Team</span> to focus on high-value creative tasks.
-              </p>
+             <h2 className="text-[10px] md:text-xs lg:text-sm font-mono text-zinc-500 mb-2 tracking-widest uppercase">
+               Case Study
+             </h2>
+             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[0.9] tracking-tight mb-4 md:mb-6">
+               SSI<span className="text-zinc-600">STUDIOS</span>
+             </h1>
+             {/* FIX: Escaped quotes */}
+             <p className="text-sm md:text-base lg:text-lg text-zinc-400 font-light leading-relaxed max-w-xl">
+               A custom workflow solution bridging the gap between data management and graphic design. 
+               By automating &quot;busy work,&quot; we empower the <span className="text-white font-medium">SSimaya Team</span> to focus on high-value creative tasks.
+             </p>
            </motion.div>
 
            <motion.div 
              style={{ y: yFast, opacity: opacityFade }}
              className="flex flex-col items-start lg:items-end gap-4 w-full lg:w-auto"
            >
-              <SpotlightCard className="w-full lg:w-auto rounded-lg backdrop-blur-md">
-                <div className="flex justify-between lg:justify-end items-center gap-4 px-4 py-3 md:px-6 md:py-4 cursor-pointer hover:bg-white/5 transition-colors">
-                   <div className="text-left lg:text-right">
-                      <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1">Project Lead</p>
-                      <p className="text-xs md:text-sm font-bold text-white">Puneet Shukla</p>
-                   </div>
-                   <div className="h-8 w-px bg-white/10"></div>
-                   <div className="text-left lg:text-right">
-                      <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1">Supervision</p>
-                      <p className="text-xs md:text-sm font-bold text-white">Naveen A. Kumar</p>
-                   </div>
-                </div>
-              </SpotlightCard>
+             <SpotlightCard className="w-full lg:w-auto rounded-lg backdrop-blur-md">
+               <div className="flex justify-between lg:justify-end items-center gap-4 px-4 py-3 md:px-6 md:py-4 cursor-pointer hover:bg-white/5 transition-colors">
+                  <div className="text-left lg:text-right">
+                    <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1">Project Lead</p>
+                    <p className="text-xs md:text-sm font-bold text-white">Puneet Shukla</p>
+                  </div>
+                  <div className="h-8 w-px bg-white/10"></div>
+                  <div className="text-left lg:text-right">
+                    <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1">Supervision</p>
+                    <p className="text-xs md:text-sm font-bold text-white">Naveen A. Kumar</p>
+                  </div>
+               </div>
+             </SpotlightCard>
            </motion.div>
         </div>
 
@@ -276,9 +278,10 @@ export default function CaseStudySection() {
                   </div>
                   <h2 className="text-xs md:text-sm font-mono uppercase tracking-widest">The Ecosystem</h2>
                 </div>
+                {/* FIX: Escaped quotes */}
                 <p className="text-xs md:text-sm lg:text-base text-zinc-400 leading-relaxed mb-6 md:mb-8 flex-grow">
                   We built a unified ecosystem where design tools and databases coexist. 
-                  SSISTUDIOS integrates seven specific tools into one dashboard, acting as the "Single Source of Truth" 
+                  SSISTUDIOS integrates seven specific tools into one dashboard, acting as the &quot;Single Source of Truth&quot; 
                   and automating asset generation instantly.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-auto">
@@ -346,10 +349,11 @@ export default function CaseStudySection() {
 
                   {/* Impact Footer */}
                   <div className="mt-auto pt-4 border-t border-white/5">
-                     <p className="text-[10px] uppercase tracking-widest text-zinc-600 mb-2">Impact</p>
-                     <p className="text-[10px] md:text-xs text-zinc-400 italic border-l-2 border-white/10 pl-3 group-hover:border-cyan-500/50 group-hover:text-zinc-300 transition-all">
-                       "{mod.problemSolved}"
-                     </p>
+                      <p className="text-[10px] uppercase tracking-widest text-zinc-600 mb-2">Impact</p>
+                      {/* FIX: Escaped quotes */}
+                      <p className="text-[10px] md:text-xs text-zinc-400 italic border-l-2 border-white/10 pl-3 group-hover:border-cyan-500/50 group-hover:text-zinc-300 transition-all">
+                        &quot;{mod.problemSolved}&quot;
+                      </p>
                   </div>
 
                 </div>
@@ -372,28 +376,28 @@ export default function CaseStudySection() {
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl opacity-20 pointer-events-none" />
           
           <SpotlightCard className="bg-black/40 backdrop-blur-xl rounded-2xl relative">
-             <div className="p-6 md:p-12 relative z-10 grid md:grid-cols-3 gap-8 md:gap-16">
-               <div className="md:col-span-1 flex flex-col justify-center">
-                 <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">{NATIVE_APPS.title}</h3>
-                 <p className="text-zinc-400 text-xs md:text-sm leading-relaxed mb-8">
-                   {NATIVE_APPS.desc}
-                 </p>
-                 <div className="flex flex-col gap-4">
-                    <InteractiveButton icon={Download}>Download APK</InteractiveButton>
-                    <InteractiveButton icon={Download}>Windows EXE</InteractiveButton>
-                 </div>
-               </div>
+              <div className="p-6 md:p-12 relative z-10 grid md:grid-cols-3 gap-8 md:gap-16">
+                <div className="md:col-span-1 flex flex-col justify-center">
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">{NATIVE_APPS.title}</h3>
+                  <p className="text-zinc-400 text-xs md:text-sm leading-relaxed mb-8">
+                    {NATIVE_APPS.desc}
+                  </p>
+                  <div className="flex flex-col gap-4">
+                     <InteractiveButton icon={Download}>Download APK</InteractiveButton>
+                     <InteractiveButton icon={Download}>Windows EXE</InteractiveButton>
+                  </div>
+                </div>
 
-               <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                 {NATIVE_APPS.features.map((feat, i) => (
-                   <div key={i} className="group/feature p-6 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10 transition-all flex flex-col justify-center items-center text-center cursor-pointer">
-                     <div className="text-zinc-500 mb-4 group-hover/feature:text-white group-hover/feature:scale-110 transition-all duration-300">{feat.icon}</div>
-                     <h5 className="text-white text-sm font-bold uppercase tracking-wider mb-2">{feat.name}</h5>
-                     <p className="text-[10px] text-zinc-500 font-mono group-hover/feature:text-zinc-400 transition-colors">{feat.detail}</p>
-                   </div>
-                 ))}
-               </div>
-             </div>
+                <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {NATIVE_APPS.features.map((feat, i) => (
+                    <div key={i} className="group/feature p-6 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10 transition-all flex flex-col justify-center items-center text-center cursor-pointer">
+                      <div className="text-zinc-500 mb-4 group-hover/feature:text-white group-hover/feature:scale-110 transition-all duration-300">{feat.icon}</div>
+                      <h5 className="text-white text-sm font-bold uppercase tracking-wider mb-2">{feat.name}</h5>
+                      <p className="text-[10px] text-zinc-500 font-mono group-hover/feature:text-zinc-400 transition-colors">{feat.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
           </SpotlightCard>
         </motion.div>
 
