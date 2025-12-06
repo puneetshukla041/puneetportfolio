@@ -165,7 +165,6 @@ export default function HireMeSection() {
                   <Briefcase size={18} />
                   <span className="text-sm font-semibold uppercase tracking-wider">Hiring?</span>
                </div>
-               
                <button 
                  onClick={handleCopy}
                  className="group w-full sm:w-auto inline-flex items-center justify-between sm:justify-start gap-4 bg-white text-black px-6 md:px-8 py-4 rounded-lg font-semibold text-sm md:text-base hover:bg-zinc-200 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
@@ -184,13 +183,10 @@ export default function HireMeSection() {
                  *Click to copy my direct email to your clipboard.
                </p>
             </div>
-
           </div>
-
           {/* Right Column: Visual Grid (7/12 width equivalent) */}
           <div className="w-full lg:w-7/12 order-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-
               {/* Card 1: Resume */}
               <TiltCard className="col-span-1 min-h-[240px] flex flex-col justify-between p-6 md:p-8 cursor-pointer group">
                   <div>
