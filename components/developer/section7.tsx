@@ -18,6 +18,7 @@ import {
   Clock, 
   Building2,
   Briefcase
+  
 } from 'lucide-react';
 
 // --- UTILS ---
@@ -234,7 +235,6 @@ export default function HireMeSection() {
 
             </div>
           </div>
-
         </div>
       </div>
     </section>
