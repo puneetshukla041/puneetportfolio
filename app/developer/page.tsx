@@ -4,30 +4,30 @@ import Section1 from '@/components/developer/section1';
 import Section2 from '@/components/developer/section2';
 import Section3 from '@/components/developer/section3';
 import Section4 from '@/components/developer/section4';
+
 const Page = () => {
   return (
     <main className="relative bg-neutral-950 min-h-screen">
       <Header />
 
-      {/* Home Section -> Maps to Header "Home" */}
-      
+      {/* Home */}
       <div id="section-1">
         <Section1 />
       </div>
 
-      {/* Experience Section -> Maps to Header "Experience" */}
+      {/* Experience */}
       <div id="section-2">
         <Section2 />
       </div>
-    <Section3 />
-    <Section4 />
-   
-      {/* Placeholder IDs for future sections to prevent errors if clicked
-          (You can replace these divs with the actual components later) */}
-      <div id="section-3" /> {/* Projects */}
-      <div id="section-4" /> {/* Skills */}
-      <div id="section-5" /> {/* Hire Me */}
-   
+
+      {/* Projects (section 3 + section 4 both here) */}
+      <div id="section-3">
+        <Section3 />
+        <Section4 />
+      </div>
+
+      {/* placeholder for future hire me section */}
+      <div id="section-5" />
     </main>
   );
 };
