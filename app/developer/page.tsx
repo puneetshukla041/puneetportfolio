@@ -8,7 +8,6 @@ import Section4 from '@/components/developer/section4';
 // Importing based on your variable naming convention
 import Section5 from '@/components/developer/section6'; 
 import Section6 from '@/components/developer/section5';
-
 // Import the tracker
 import VisitorTracker from '@/components/VisitorTracker';
 
