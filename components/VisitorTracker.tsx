@@ -1,20 +1,29 @@
 // components/VisitorTracker.tsx
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function VisitorTracker() {
-  useEffect(() => {
-    // 1. Check if this browser has visited before
-    const hasVisited = localStorage.getItem('portfolio_visit_v1');
+  // Check to ensure we don't fire twice in React Strict Mode (Development)
+  const hasFired = useRef(false);
 
-    if (!hasVisited) {
-      // 2. If NO flag, call the API
+  useEffect(() => {
+    if (hasFired.current) return;
+    hasFired.current = true;
+
+    // 1. Use sessionStorage instead of localStorage.
+    //    localStorage = Remembers FOREVER (Blocks you even after DB reset).
+    //    sessionStorage = Remembers only for this TAB.
+    const hasVisitedSession = sessionStorage.getItem('portfolio_visit_session');
+
+    if (!hasVisitedSession) {
       const updateCount = async () => {
         try {
           await fetch('/api/visit', { method: 'POST' });
-          // 3. Set the flag so we don't count this device again
-          localStorage.setItem('portfolio_visit_v1', 'true');
+          
+          // 2. Mark this SPECIFIC TAB as visited.
+          //    If the user closes the tab and comes back -> It counts as a new visit.
+          sessionStorage.setItem('portfolio_visit_session', 'true');
         } catch (error) {
           console.error('Tracking error:', error);
         }
@@ -24,5 +33,5 @@ export default function VisitorTracker() {
     }
   }, []);
 
-  return null; // This component is invisible
+  return null;
 }

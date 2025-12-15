@@ -28,9 +28,15 @@ export async function POST(req: NextRequest) {
     await dbConnect();
 
     // 1. Get location from Vercel headers
-    // Note: These will be null on localhost, but work on Vercel deployment
-    const city = req.headers.get('x-vercel-ip-city') || 'Unknown City';
-    const country = req.headers.get('x-vercel-ip-country') || 'Unknown Country';
+    let city = req.headers.get('x-vercel-ip-city');
+    let country = req.headers.get('x-vercel-ip-country');
+
+    // FIX: If running on Localhost, these headers are null.
+    // We explicitly set fake data so you can see it working in your Admin UI.
+    if (!city || !country) {
+      city = 'Test City (Localhost)';
+      country = 'India';
+    }
 
     // 2. Update DB: Increment count + Push new location to array
     const updatedVisitor = await Visitor.findOneAndUpdate(
@@ -45,7 +51,11 @@ export async function POST(req: NextRequest) {
           } 
         }
       },
-      { new: true, upsert: true }
+      { 
+        new: true, 
+        upsert: true,
+        setDefaultsOnInsert: true // FIX: Ensures "name" and defaults are set if doc is new
+      }
     );
 
     return NextResponse.json({ success: true, count: updatedVisitor.count });
