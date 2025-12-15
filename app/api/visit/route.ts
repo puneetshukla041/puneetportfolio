@@ -1,61 +1,75 @@
-// app/api/visit/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Visitor from '@/models/Visitor';
 
-// GET: Fetches count AND location history (used by Admin)
+// --- HELPER: Parse User Agent ---
+// This simple function guesses the OS and Browser
+const parseUserAgent = (ua: string | null) => {
+  if (!ua) return { device: 'Unknown', browser: 'Unknown' };
+  
+  const uaString = ua.toLowerCase();
+  
+  // Detect OS (Device)
+  let device = 'Desktop';
+  if (uaString.includes('android')) device = 'Android';
+  else if (uaString.includes('iphone') || uaString.includes('ipad')) device = 'iOS';
+  else if (uaString.includes('windows')) device = 'Windows';
+  else if (uaString.includes('mac') && !uaString.includes('iphone')) device = 'Mac';
+  else if (uaString.includes('linux')) device = 'Linux';
+
+  // Detect Browser
+  let browser = 'Unknown';
+  if (uaString.includes('chrome') && !uaString.includes('edg')) browser = 'Chrome';
+  else if (uaString.includes('safari') && !uaString.includes('chrome')) browser = 'Safari';
+  else if (uaString.includes('firefox')) browser = 'Firefox';
+  else if (uaString.includes('edg')) browser = 'Edge';
+
+  return { device, browser };
+};
+
+// GET Route
 export async function GET() {
   try {
     await dbConnect();
     const visitorDoc = await Visitor.findOne({ name: 'portfolio_counter' });
-    
     return NextResponse.json({ 
       count: visitorDoc ? visitorDoc.count : 0,
-      recentVisits: visitorDoc ? visitorDoc.recentVisits : [] // Return the list of locations
-    }, {
-      headers: {
-        'Cache-Control': 'no-store, max-age=0',
-      },
-    });
+      recentVisits: visitorDoc ? visitorDoc.recentVisits : []
+    }, { headers: { 'Cache-Control': 'no-store, max-age=0' } });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'DB Error' }, { status: 500 });
   }
 }
 
-// POST: Increments count AND saves location (used by Tracker)
+// POST Route
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
 
-    // 1. Get location from Vercel headers
+    // 1. Get Location (with Localhost fallback)
     let city = req.headers.get('x-vercel-ip-city');
     let country = req.headers.get('x-vercel-ip-country');
+    if (!city || !country) { city = 'Gurugram'; country = 'India'; }
 
-    // FIX: If running on Localhost, these headers are null.
-    // We explicitly set fake data so you can see it working in your Admin UI.
-    if (!city || !country) {
-      city = 'Test City (Localhost)';
-      country = 'India';
-    }
+    // 2. NEW: Get Device & Browser info
+    const userAgent = req.headers.get('user-agent');
+    const { device, browser } = parseUserAgent(userAgent);
 
-    // 2. Update DB: Increment count + Push new location to array
+    // 3. Update DB
     const updatedVisitor = await Visitor.findOneAndUpdate(
       { name: 'portfolio_counter' },
       { 
-        $inc: { count: 1 }, // Increase count
+        $inc: { count: 1 },
         $push: { 
           recentVisits: { 
-            $each: [{ city, country, date: new Date() }], // Add new visit info
-            $position: 0, // Add to top of list
-            $slice: 50    // Keep only last 50 visits to save space
+            // Save the new fields here
+            $each: [{ city, country, device, browser, date: new Date() }], 
+            $position: 0, 
+            $slice: 50 
           } 
         }
       },
-      { 
-        new: true, 
-        upsert: true,
-        setDefaultsOnInsert: true // FIX: Ensures "name" and defaults are set if doc is new
-      }
+      { new: true, upsert: true, setDefaultsOnInsert: true }
     );
 
     return NextResponse.json({ success: true, count: updatedVisitor.count });
