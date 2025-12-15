@@ -7,6 +7,7 @@ const parseUserAgent = (ua: string | null) => {
   if (!ua) return { device: 'Unknown', browser: 'Unknown', isBot: false };
   const uaString = ua.toLowerCase();
   
+  // Bot Filter
   if (
     uaString.includes('bot') || 
     uaString.includes('crawl') || 
@@ -19,12 +20,14 @@ const parseUserAgent = (ua: string | null) => {
     return { device: 'Bot', browser: 'Bot', isBot: true };
   }
 
+  // Device Detection
   let device = 'Desktop';
   if (uaString.includes('android')) device = 'Android';
   else if (uaString.includes('iphone') || uaString.includes('ipad')) device = 'iOS';
   else if (uaString.includes('windows')) device = 'Windows';
   else if (uaString.includes('mac')) device = 'Mac';
 
+  // Browser Detection
   let browser = 'Unknown';
   if (uaString.includes('chrome')) browser = 'Chrome';
   else if (uaString.includes('safari')) browser = 'Safari';
@@ -33,7 +36,7 @@ const parseUserAgent = (ua: string | null) => {
   return { device, browser, isBot: false };
 };
 
-// GET Route
+// GET Route (For Admin Panel)
 export async function GET() {
   try {
     await dbConnect();
@@ -47,7 +50,7 @@ export async function GET() {
   }
 }
 
-// POST Route
+// POST Route (For Tracker)
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
@@ -60,59 +63,66 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, message: 'Bot ignored' });
     }
 
-    // 2. GET REAL LOCATION (No Mock Data)
     let city = null;
     let country = null;
-    let region = null; // Variable for State/Province
+    let region = null;
 
-    // Step A: Check Vercel Headers (Best for Live Production)
-    if (req.headers.get('x-vercel-ip-city')) {
-      city = decodeURIComponent(req.headers.get('x-vercel-ip-city')!);
-      country = decodeURIComponent(req.headers.get('x-vercel-ip-country')!);
-      // Vercel gives region code (e.g., "HR" for Haryana), sometimes useful to append
-      region = req.headers.get('x-vercel-ip-region'); 
+    // 2. CHECK FOR EXACT GPS DATA (From Frontend)
+    // This is the new part that fixes the "Ghaziabad" issue
+    try {
+      const body = await req.json();
+      if (body.manualLocation) {
+        city = body.manualLocation.city;
+        country = body.manualLocation.country;
+        region = body.manualLocation.region;
+      }
+    } catch (e) {
+      // No JSON body sent (e.g. old tracker code), just ignore and use fallback
     }
 
-    // Step B: If Localhost (No Vercel headers), fetch from real IP API
-    if (!city || !country) {
-      try {
-        // We use ip-api.com because it gives City AND RegionName (State)
-        const ipRes = await fetch('http://ip-api.com/json/');
-        if (ipRes.ok) {
-          const ipData = await ipRes.json();
-          if (ipData.status === 'success') {
-             city = ipData.city;         // e.g. "Noida"
-             country = ipData.country;   // e.g. "India"
-             region = ipData.regionName; // e.g. "Uttar Pradesh"
+    // 3. FALLBACK: IF NO GPS (User Blocked), USE IP ADDRESS
+    if (!city) {
+      // A. Live Vercel Headers
+      if (req.headers.get('x-vercel-ip-city')) {
+        city = decodeURIComponent(req.headers.get('x-vercel-ip-city')!);
+        country = decodeURIComponent(req.headers.get('x-vercel-ip-country')!);
+        region = req.headers.get('x-vercel-ip-region');
+      } 
+      // B. Localhost / Mobile Data Fallback (ip-api.com)
+      else {
+        try {
+          const ipRes = await fetch('http://ip-api.com/json/');
+          if (ipRes.ok) {
+            const ipData = await ipRes.json();
+            if (ipData.status === 'success') {
+               city = ipData.city;
+               country = ipData.country;
+               region = ipData.regionName;
+            }
           }
-        }
-      } catch (e) {
-        console.error('Real location fetch failed:', e);
+        } catch (e) {}
       }
     }
 
-    // 3. FORMATTING (Combine City + State)
-    // You asked for "Exact State or City". 
-    // We will save "City, State" into the database so the Admin UI shows both.
+    // 4. FORMATTING
     let finalCityString = 'Unknown Location';
     
+    // Combine City + Region (e.g., "Gurugram, Haryana")
     if (city && region) {
-        finalCityString = `${city}, ${region}`; // Result: "Noida, Uttar Pradesh"
+        finalCityString = `${city}, ${region}`;
     } else if (city) {
         finalCityString = city;
     }
 
-    // If API failed completely, be honest:
     if (!country) country = 'Unknown Country';
 
-    // 4. SAVE TO DB
+    // 5. SAVE TO DB
     const updatedVisitor = await Visitor.findOneAndUpdate(
       { name: 'portfolio_counter' },
       { 
         $inc: { count: 1 },
         $push: { 
           recentVisits: { 
-            // We save the detailed "City, State" string into the city field
             $each: [{ city: finalCityString, country, device, browser, date: new Date() }], 
             $position: 0, 
             $slice: 50 
